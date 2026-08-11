@@ -1,0 +1,31 @@
+One page project brief for my office management web-app:
+
+What does this problem solve?
+  - Digitizes management of corporation files and documents and provides an efficient-featured search.
+  - Tagging system allow files to be treated and managed differently based on the tag (Invoices, Contracts, Proposals & estimates, employees, contractors, Vehicles, Payments & Bills, etc). Currently only these tags, will add more as needed.
+  - Separate department tags for more broad grouping.
+  - Consolidates all traditional office department tools into one tool so that one user can manage all office tasks.
+  - Central web-based dashboard with users for managers and executives to query information in lue of office-manager.
+  - Reminders and priority tasks dashboard to keep track of TODO tasks and their importance.
+
+
+Who is it for?
+  - Currently just me for the office. As the app expands potentially will be opensourced and be monetized in future.
+
+
+What are the 3-5 core features (your MVP)?
+  - File management /W tagging. Stores and manages files and directories based on tags.
+  - Separate databases (per department). ex, AR db, AP db, Vehicles db, HR db. 
+  - Web-app dashboard, tree organized, Company->Department->Tag. Data not nested in more than (3 menus).
+  - TODO/task graph with per user modifications and task assignment.
+  - task and payment reminders (web-app notification with future whatsapp group bot reminders).
+
+
+What is explicitly out-of-scope for V1?
+  - Cloud-server hosted for online access.
+  - User Accounts and multi-user modifications.
+  - Notifications outside of browser.
+  - Vehicle gps and insurance tracking and photo displaying.
+  - Dynamic react dashboard. Simple GUI first.
+  - Task assignment as user account won't be added yet.
+
