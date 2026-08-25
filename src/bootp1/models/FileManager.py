@@ -1,47 +1,46 @@
+from datetime import datetime
+from sqlalchemy.orm import relationship, Mapped, mapped_column
+from sqlalchemy.ext.declarative import declarative_base
+
 import bootp1.models.FileRepository
 import bootp1.models.FileStorage
 
+BASE = declarative_base
+
 class FileService:
-    def upload(stream, file_name, folder_id):
-        //TODO: Uploads/saves file to uploads directory.
-        //Updated db accordingly (adds file entry)
+        def upload(self, stream, file_name, section_id):
+                # TODO: Uploads/*saves file to uploads directory.
+                # Updated db accordingly (adds file entry)
 
-    def download(id):
-        //TODO: Finds file and returns file stream.
+        def download(self, pk):
+                # TODO: Finds file and returns file stream.
 
-    def delete(id):
-        //TODO: deletes file from uploads directory and db.
+        def delete(self, pk):
+                # TODO: deletes file from uploads directory and db.
 
-class FileRecord:
-    def __init__(self, id, file_name, folder_id, size_bytes, mime_type, date_created, date_modified):
-        self.id = id
-        self.file_name = file_name
-        self.stored_name = file_name
-        self.folder_id = folder_id
-        self.size_bytes = size_bytes
-        self.mime_type = mime_type
-        self.date_created = date_created
-        self.date_modified = date_modified
+class FileRecord(BASE):
+        __tablename__ = "files"
+        # Attributes
+        file_id:Mapped[int] = mapped_column(primary_key=True)
+        name:Mapped[str]
+        stored_name:Mapped[str]
+        size_bytes:Mapped[int]
+        mime_type:Mapped[str]
+        date_created:Mapped[datetime] = mapped_column(DateTime(timezone=True),
+                                                       server_default=func.now())
+        date_modified:Mapped[datetime] = mapped_column(DateTime(timezone=True),
+                                                       server_default=func.now())
+        section_id:Mapped[int] = mapped_column(ForeignKey("sections.section_id"))
 
-    def is_previewable():
-        if (self.mime_type == pdf):
-            return True
-        else: return False
+        def is_previewable(self):
+                if (self.mime_type == pdf):
+                        return True
+                else: return False
 
-class Folder:
-    def __init__(self, id, name, parent_id):
-        self.id = id
-        self.name = name
-        self.parent_id = parent_id
-
-    def get_full_path():
-        //recursively calls on parent Folder object.
-        //object created by get_folder method in FolderRepository class.
-        if (self.parent_id == None):
-            return self.name
-
-        parent = Folder(Repository.get_folder(parent_id))
-        if (parent == None):
-            return self.name
-
-        return self.name + '/' + parent.get_full_path()
+class Section(BASE):
+        __tablename__ = "sections"
+        # Attributes
+        section_id:Mapped[int] = mapped_column(primary_key=True)
+        name:Mapped[str]
+        # Relationships
+        files:Mapped[FileRecord] = relationship(back_populates("sections")
