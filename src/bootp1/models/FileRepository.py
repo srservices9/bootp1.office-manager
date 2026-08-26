@@ -1,6 +1,5 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import NoResultFound, MultipleResultsFound
 
 from bootp1.__init__ import create_engine_link
 from bootp1.models.FileManager import FileRecord, Section
@@ -13,14 +12,15 @@ class Repository:
                 with Session(self.engine) as session:
                         try:
                                 session.add(FileRecord)
-                                # TODO add FileRecord object to db.
-                                # handle duplicate pk exception separately.
+                                print(session.new)
+                                session.commit()
                         except Exception:
                                 print(Exception)
 
         def find_by_id(self, pk):
                 with Session(self.engine) as session:
                         try:
+                                # TODO Check if FileRecord not found.
                                 result = session.get(FileRecord, pk)
                                 return result
                         except Exception:
@@ -30,21 +30,17 @@ class Repository:
         def find_by_section(self, pk):
                 with Session(self.engine) as session:
                         result = session.execute(select(FileRecord).where(FileRecord.section_id == pk))
-                        # TODO: query for files in section.
-                        # Create list of FileRecords and return.
-                        # Return None if folder not found.
+                        return result
 
         def search(self, text, filters):
                 with Session(self.engine) as session:
                         result = session.execute(select(FileRecord).where(FileRecord.stored_name.in_(text)))
-                        # TODO: query for files based on text string and filters.
-                        # Create list of FileRecords and return.
-                        # Return None if no files found.
+                        # TODO: Search by filters and append to result.
+                        return result
 
         def delete(self, pk):
                 with Session(self.engine) as session:
                         file = session.get(FileRecord, pk)
                         session.delete(file)
                         session.commit()
-                        # TODO: query to delete file from db.
-                        # Returns None regardless of file existence.
+                        # TODO check if FileRecord not found.
