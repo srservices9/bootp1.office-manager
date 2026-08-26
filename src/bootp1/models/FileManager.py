@@ -4,20 +4,23 @@ from sqlalchemy.orm import relationship, Mapped, mapped_column
 from sqlalchemy.ext.declarative import declarative_base
 
 from bootp1.models.FileRepository import Repository
-import bootp1.models.FileStorage
+from bootp1.models.FileStorage import Storage
 
 BASE = declarative_base()
 REPO = Repository()
+STORE = Storage()
 
 class FileService:
-        def upload(self, stream, file_name, section_id):
-                REPO.add_file_to_db(stream)
+        def upload(self, FileRecord):
+                # NOTE Method called by upload form method, only for upload purposes.
+                # NOTE This method adds files to the management system.
+                REPO.add_file_to_db(FileRecord)
+                STORE.store(FileRecord)
                 # TODO: Uploads/*saves file to uploads directory.
-                # Updated db accordingly (adds file entry)
 
         def download(self, pk):
                 REPO.find_by_id(pk)
-                # TODO: Finds file and returns file stream.
+                # TODO: Finds file and returns file from file path.
 
         def delete(self, pk):
                 REPO.delete(pk)
