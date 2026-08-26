@@ -18,7 +18,7 @@ def create_app():
  
     return app
 
-def create_engine():
+def create_engine_link():
     engine = create_engine(Config.DATABASE_URL, echo=True)
 
     return engine
