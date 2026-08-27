@@ -1,0 +1,101 @@
+from datetime import datetime
+from enum import Enum, auto
+
+from sqlalchemy import DateTime, ForeignKey, func
+from sqlalchemy.orm import relationship, Mapped, mapped_column
+from sqlalchemy.ext.declarative import declarative_base
+
+from bootp1.models.DatabaseManager import Repository
+from bootp1.models.FileStorage import Storage
+
+BASE = declarative_base()
+REPO = Repository()
+STORE = Storage()
+
+class RecordService:
+        def new_record(self, record):
+                REPO.add_record_to_db(record)
+                # TODO Finish record method.
+
+        def modify_record(self, record_id, changes_dict):
+                # TODO Update record based on changes_dict[attribute: value]
+                REPO.update_record()
+
+
+
+class FileService:
+        def upload(self, record_id, file_name, file_size, file_type, section_id, file_stream):
+                # Will store file in repo and return stored_name
+                stored_name = STORE.store(file_stream, file_name, file_type, section_id)
+
+                file = FileRecord(name=file_name, stored_name=stored_name, size_bytes=file_size, 
+                                  mime_type=file_type, section_id=section_id)
+                file_id = REPO.add_record_to_db(file)
+
+                REPO.add_file_to_record(record_id, file_id)
+                
+
+        def download(self, FileRecord):
+                STORE.open(FileRecord)
+                # TODO: Finds file and returns file from file path.
+
+        def delete(self, pk):
+                REPO.delete(pk)
+                # TODO: deletes file from uploads directory and db.
+
+
+# -----------------------Start of sections------------------------------
+# Frontend will be separated by sections.
+# Each section will have an entry with file upload for supporting documentation.
+# NOTE App core will call FileService.upload to add file to db,
+# Then it will link the file record with the section record with the file_id returned from upload method.
+class Invoice(BASE):
+        __tablename__ = "invoices"
+        # Attributes
+
+class Estimate(BASE):
+        __tablename__ = "estimates"
+        # Attributes
+
+class Vehicle(BASE):
+        __tablename__ = "vehicles"
+        # Attributes
+
+class Insurance(BASE):
+        __tablename__ = "insurances"
+        # Attributes
+
+# -----------------------End of sections--------------------------------
+
+class FileRecord(BASE):
+        __tablename__ = "files"
+        # Attributes
+        file_id:Mapped[int] = mapped_column(primary_key=True)
+        name:Mapped[str]
+        stored_name:Mapped[str]
+        size_bytes:Mapped[int]
+        mime_type:Mapped[str]
+        date_uploaded:Mapped[datetime] = mapped_column(DateTime(timezone=True),
+                                                       server_default=func.now())
+        section_id:Mapped[int] = mapped_column(ForeignKey("sections.section_id"))
+
+        def is_previewable(self):
+                if (self.mime_type == "pdf"):
+                        return True
+                else: return False
+
+class SectionTag(BASE):
+        __tablename__ = "sections"
+        # Attributes
+        section_id:Mapped[int] = mapped_column(primary_key=True)
+        name:Mapped[str]
+        # Relationships
+        files:Mapped[FileRecord] = relationship(back_populates="sections")
+
+class Filters(Enum):
+        # Declaring filters for the search function in REPO as enums to specify filter options
+        FILE_NAME = auto()
+        DATE_RANGE = auto()
+        SECTION = auto()
+        AMOUNT = auto()
+
