@@ -21,6 +21,9 @@ class Repository:
                 with Session(self.engine) as session:
                         session.execute(Update(record).where())
                         # TODO Update record to hold foreign-key of file
+
+        def update_record(self, record, update):
+                # TODO Update record based on update[attribute: value] parameter.
                         
 
         def delete(self, pk):
