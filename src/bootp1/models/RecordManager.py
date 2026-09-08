@@ -52,6 +52,14 @@ class FileService:
 class Invoice(BASE):
         __tablename__ = "invoices"
         # Attributes
+        invoice_id:Mapped[int] = mapped_column(primary_key=True)
+        invoice_num:Mapped[str]
+        terms:Mapped[str]
+        total:Mapped[float]
+
+        # Foreign Keys
+        customer_id:Mapped[int] = mapped_column(ForeignKey("customers.customer_id"))
+        file_id:Mapped[int] = mapped_column(ForeignKey("files.file_id"))
 
 class Estimate(BASE):
         __tablename__ = "estimates"
@@ -66,7 +74,31 @@ class Insurance(BASE):
         # Attributes
 
 # -----------------------End of sections--------------------------------
+# -----------------------Start of items---------------------------------
+class Item(BASE):
+        __tablename__ = "items"
+        # Attributes
+        item_id:Mapped[int] = mapped_column(primary_key=True)
+        name:Mapped[str]
+        description:Mapped[str]
+        cost:Mapped[float]
 
+class ItemEntry(BASE):
+        __tablename__ = "item_entries"
+        # Attributes
+        item_entry_id:Mapped[int] = mapped_column(primary_key=True)
+        description:Mapped[str]
+        quantity:Mapped[int]
+        rate:Mapped[float]
+        amount:Mapped[float]
+
+        # Foreign Keys
+        invoice_id:Mapped[int] = mapped_column(ForeignKey("invoices.invoice_id"))
+        estimate_id:Mapped[int] = mapped_column(ForeignKey("estimates.estimate_id"))
+        item_id:Mapped[int] = mapped_column(ForeignKey("items.item_id"))
+        
+# -----------------------End of items-----------------------------------
+# -----------------------Start of Files---------------------------------
 class FileRecord(BASE):
         __tablename__ = "files"
         # Attributes
@@ -77,7 +109,11 @@ class FileRecord(BASE):
         mime_type:Mapped[str]
         date_uploaded:Mapped[datetime] = mapped_column(DateTime(timezone=True),
                                                        server_default=func.now())
+        # Foreign Keys
         section_id:Mapped[int] = mapped_column(ForeignKey("sections.section_id"))
+        
+        # Relationships
+        invoices:Mapped[Invoice] = relationship(back_populates="invoices")
 
         def is_previewable(self):
                 if (self.mime_type == "pdf"):
@@ -99,3 +135,4 @@ class Filters(Enum):
         SECTION = auto()
         AMOUNT = auto()
 
+# ----------------------End of Files--------------------------------------
