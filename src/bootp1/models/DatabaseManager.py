@@ -2,38 +2,67 @@ from sqlalchemy import Update
 from sqlalchemy.orm import Session
 
 from bootp1.__init__ import create_engine_link
+from bootp1.models.RecordManager import FileRecord
 
 class Repository:
         def __init__(self):
                 self.engine = create_engine_link()
 
-        def add_record_to_db(self, record):
+        def add_record(self, record):
                 with Session(self.engine) as session:
                         try:
                                 session.add(record)
-                                print(session.new)
+                        except:
+                                session.rollback()
+                                raise
+                        else:
                                 session.commit()
-                        except Exception:
-                                print(Exception)
-        
-        def add_file_to_record(self, file_id, record):
+        def delete_record(self, record_id, record_type):
                 with Session(self.engine) as session:
-                        session.execute(Update(record).where())
-                        # TODO Update record to hold foreign-key of file
+                        try:
+                                record = session.get(record_type, record_id)
+                                session.delete(record)
+                        except:
+                                session.rollback()
+                                raise
+                        else:
+                                session.commit()
+        
+        def add_file_to_record(self, file_id, record_id, record_type):
+                with Session(self.engine) as session:
+                        try:
+                                # Update record to hold file_id
+                                record = session.get(record_type, record_id)
+                                if record == None:
+                                        raise Exception("Record not found.")
+                                file = session.get(FileRecord, file_id)
+                                if file == None:
+                                        raise Exception("FileRecord not found")
+
+                                session.execute(Update(record).where(
+                                        record.record_id == record_id).values({"file_id": file_id}))
+                                if not session.is_modified(record):
+                                        raise Exception(f"Unable to add file: {file} to record: {record}")
+                        except:
+                                session.rollback()
+                                raise
+                        else:
+                                session.commit()
 
         def update_record(self, record_id, record_type, updates):
                 with Session(self.engine) as session:
                         try:
-                                session.execute(Update(record_type).where(
-                                        record_type.record_id == record_id).values(updates))
-                                session.commit()
-                        except Exception:
-                                print(Exception)
-                        
+                                record = session.get(record_type, record_id)
+                                if record == None:
+                                        raise Exception("Record not found.")
 
-        def delete_record(self, record_id, record_type):
-                with Session(self.engine) as session:
-                        record = session.get(record_type, record_id)
-                        session.delete(record)
-                        session.commit()
-                        # TODO check if record not found.
+                                session.execute(Update(record).where(
+                                        record.record_id == record_id).values(updates))
+                                if not session.is_modified(record):
+                                        raise Exception(f"Unable to update record: {record}")
+                        except:
+                                session.rollback()
+                                raise
+                        else:
+                                session.commit()
+

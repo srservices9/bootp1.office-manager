@@ -13,9 +13,23 @@ REPO = Repository()
 STORE = Storage()
 
 class RecordService:
-        def new_record(self, record):
-                REPO.add_record_to_db(record)
+        def new_record(self, type_value, record_attributes):
+                record = self.get_record_type(type_value)
+                REPO.add_record(record)
                 # TODO Finish record method.
+                # TODO For both new_record and upload_file methods:
+                # Need to figure out way to take list or dict of attributes
+                # and dynamically create record to pass to db manager
+
+        def upload_file(self, record_id, record_type, file_attributes, file_stream):
+                # TODO adapt method to use dynamic record system and create and add file & FileRecord
+                stored_name = STORE.store(file_stream, file_name, file_type, section_id)
+
+                file = FileRecord(name=file_name, stored_name=stored_name, size_bytes=file_size, 
+                                  mime_type=file_type, section_id=section_id)
+                file_id = RecordService.new_record(file)
+
+                REPO.add_file_to_record(record_id, file_id)
 
         def modify_record(self, record_id, type_value, updates_dict):
                 try:
@@ -51,16 +65,6 @@ class RecordService:
                                 return ValueError("Invalid Record Type")
 
 class FileService:
-        def upload(self, record_id, file_name, file_size, file_type, section_id, file_stream):
-                # Will store file in repo and return stored_name
-                stored_name = STORE.store(file_stream, file_name, file_type, section_id)
-
-                file = FileRecord(name=file_name, stored_name=stored_name, size_bytes=file_size, 
-                                  mime_type=file_type, section_id=section_id)
-                file_id = REPO.add_record_to_db(file)
-
-                REPO.add_file_to_record(record_id, file_id)
-                
 
         def download(self, FileRecord):
                 STORE.open(FileRecord)
@@ -137,7 +141,6 @@ class FileRecord(BASE):
         # Attributes
         record_id:Mapped[int] = mapped_column(primary_key=True)
         name:Mapped[str]
-        stored_name:Mapped[str]
         size_bytes:Mapped[int]
         mime_type:Mapped[str]
         date_uploaded:Mapped[datetime] = mapped_column(DateTime(timezone=True),
@@ -147,6 +150,9 @@ class FileRecord(BASE):
         
         # Relationships
         invoices:Mapped[Invoice] = relationship(back_populates="invoices")
+
+        # Special Attribute
+        stored_name:Mapped[str]
 
         def is_previewable(self):
                 if (self.mime_type == "pdf"):
