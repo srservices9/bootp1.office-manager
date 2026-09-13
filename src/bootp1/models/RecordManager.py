@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import Enum, auto
 
-from sqlalchemy import DateTime, ForeignKey, func
+from sqlalchemy import DateTime, ForeignKey, except_, func
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -17,11 +17,38 @@ class RecordService:
                 REPO.add_record_to_db(record)
                 # TODO Finish record method.
 
-        def modify_record(self, record_id, changes_dict):
-                # TODO Update record based on changes_dict[attribute: value]
-                REPO.update_record()
+        def modify_record(self, record_id, type_value, updates_dict):
+                try:
+                        record_type = self.get_record_type(type_value)
+                        REPO.update_record(record_id, record_type, updates_dict)
+                except Exception:
+                        print(Exception)
 
+        def delete_record(self, record_id, type_value):
+                try:
+                        record_type = self.get_record_type(type_value)
+                        REPO.delete_record(record_id, record_type)
+                except Exception:
+                        print(Exception)
 
+        def get_record_type(self, type_value):
+                match type_value:
+                        case "INVOICE":
+                                return Invoice
+                        case "ESTIMATE":
+                                return Estimate
+                        case "VEHICLE":
+                                return Vehicle
+                        case "INSURANCE":
+                                return Insurance
+                        case "ITEM":
+                                return Item
+                        case "ITEM_ENTRY":
+                                return ItemEntry
+                        case "FILE":
+                                return FileRecord
+                        case _:
+                                return ValueError("Invalid Record Type")
 
 class FileService:
         def upload(self, record_id, file_name, file_size, file_type, section_id, file_stream):
@@ -39,10 +66,8 @@ class FileService:
                 STORE.open(FileRecord)
                 # TODO: Finds file and returns file from file path.
 
-        def delete(self, pk):
-                REPO.delete(pk)
-                # TODO: deletes file from uploads directory and db.
-
+        def delete(self, record_id, file_id):
+                # TODO Call record_delete on RecordService class and FileDelete on FileManager
 
 # -----------------------Start of sections------------------------------
 # Frontend will be separated by sections.
