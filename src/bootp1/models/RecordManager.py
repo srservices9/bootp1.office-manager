@@ -52,7 +52,7 @@ class FileService:
 class Invoice(BASE):
         __tablename__ = "invoices"
         # Attributes
-        invoice_id:Mapped[int] = mapped_column(primary_key=True)
+        record_id:Mapped[int] = mapped_column(primary_key=True)
         invoice_num:Mapped[str]
         terms:Mapped[str]
         total:Mapped[float]
@@ -64,6 +64,14 @@ class Invoice(BASE):
 class Estimate(BASE):
         __tablename__ = "estimates"
         # Attributes
+        record_id:Mapped[int] = mapped_column(primary_key=True)
+        estimate_num:Mapped[str]
+        approval:Mapped[bool]
+        total:Mapped[float]
+
+        # Foreign Keys
+        customer_id:Mapped[int] = mapped_column(ForeignKey("customers.customer_id"))
+        file_id:Mapped[int] = mapped_column(ForeignKey("files.file_id"))
 
 class Vehicle(BASE):
         __tablename__ = "vehicles"
@@ -78,7 +86,7 @@ class Insurance(BASE):
 class Item(BASE):
         __tablename__ = "items"
         # Attributes
-        item_id:Mapped[int] = mapped_column(primary_key=True)
+        record_id:Mapped[int] = mapped_column(primary_key=True)
         name:Mapped[str]
         description:Mapped[str]
         cost:Mapped[float]
@@ -86,7 +94,7 @@ class Item(BASE):
 class ItemEntry(BASE):
         __tablename__ = "item_entries"
         # Attributes
-        item_entry_id:Mapped[int] = mapped_column(primary_key=True)
+        record_id:Mapped[int] = mapped_column(primary_key=True)
         description:Mapped[str]
         quantity:Mapped[int]
         rate:Mapped[float]
@@ -102,7 +110,7 @@ class ItemEntry(BASE):
 class FileRecord(BASE):
         __tablename__ = "files"
         # Attributes
-        file_id:Mapped[int] = mapped_column(primary_key=True)
+        record_id:Mapped[int] = mapped_column(primary_key=True)
         name:Mapped[str]
         stored_name:Mapped[str]
         size_bytes:Mapped[int]
