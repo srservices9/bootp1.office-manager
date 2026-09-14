@@ -13,39 +13,42 @@ REPO = Repository()
 STORE = Storage()
 
 class RecordService:
-        def new_record(self, type_value, record_attributes):
-                record = self.get_record_type(type_value)
-                REPO.add_record(record)
-                # TODO Finish record method.
-                # TODO For both new_record and upload_file methods:
-                # Need to figure out way to take list or dict of attributes
-                # and dynamically create record to pass to db manager
-
-        def upload_file(self, record_id, record_type, file_attributes, file_stream):
-                # TODO adapt method to use dynamic record system and create and add file & FileRecord
-                stored_name = STORE.store(file_stream, file_name, file_type, section_id)
-
-                file = FileRecord(name=file_name, stored_name=stored_name, size_bytes=file_size, 
-                                  mime_type=file_type, section_id=section_id)
-                file_id = RecordService.new_record(file)
-
-                REPO.add_file_to_record(record_id, file_id)
-
-        def modify_record(self, record_id, type_value, updates_dict):
+        def new_record(self, type_value: str, record_attributes: dict) -> int | None:
                 try:
-                        record_type = self.get_record_type(type_value)
-                        REPO.update_record(record_id, record_type, updates_dict)
+                        record = self.get_record_type(type_value)(record_attributes)
+                        record_id = REPO.add_record(record)
+                        return record_id
                 except Exception:
                         print(Exception)
 
-        def delete_record(self, record_id, type_value):
+        def upload_file(self, record_id: int, type_value: str, file_attributes: dict, file_stream) -> None:
+                try:
+                        stored_name = STORE.store(file_stream, file_attributes["file_name"], 
+                                                  file_attributes["file_type"], file_attributes["section_id"])
+                        
+                        file_attributes["stored_name"] = stored_name
+                        file_id = self.new_record("FILE", file_attributes)
+                        
+                        record_type = self.get_record_type(type_value)
+                        REPO.add_file_to_record(file_id, record_id, record_type)
+                except Exception:
+                        print(Exception)
+
+        def modify_record(self, record_id: int, type_value: str, updates: dict) -> None:
+                try:
+                        record_type = self.get_record_type(type_value)
+                        REPO.update_record(record_id, record_type, updates)
+                except Exception:
+                        print(Exception)
+
+        def delete_record(self, record_id: int, type_value: str) -> None:
                 try:
                         record_type = self.get_record_type(type_value)
                         REPO.delete_record(record_id, record_type)
                 except Exception:
                         print(Exception)
 
-        def get_record_type(self, type_value):
+        def get_record_type(self, type_value: str):
                 match type_value:
                         case "INVOICE":
                                 return Invoice
@@ -62,7 +65,7 @@ class RecordService:
                         case "FILE":
                                 return FileRecord
                         case _:
-                                return ValueError("Invalid Record Type")
+                                raise ValueError("Invalid Record Type")
 
 class FileService:
 
@@ -72,6 +75,7 @@ class FileService:
 
         def delete(self, record_id, file_id):
                 # TODO Call record_delete on RecordService class and FileDelete on FileManager
+                record_id
 
 # -----------------------Start of sections------------------------------
 # Frontend will be separated by sections.
@@ -90,6 +94,13 @@ class Invoice(BASE):
         customer_id:Mapped[int] = mapped_column(ForeignKey("customers.customer_id"))
         file_id:Mapped[int] = mapped_column(ForeignKey("files.file_id"))
 
+        def __init__(self, attributes_dict) -> None:
+                self.record_id = attributes_dict["record_id"]
+                self.invoice_num = attributes_dict["invoice_num"]
+                self.terms = attributes_dict["terms"]
+                self.total = attributes_dict["total"]
+                self.customer_id = attributes_dict["customer_id"]
+
 class Estimate(BASE):
         __tablename__ = "estimates"
         # Attributes
@@ -101,6 +112,13 @@ class Estimate(BASE):
         # Foreign Keys
         customer_id:Mapped[int] = mapped_column(ForeignKey("customers.customer_id"))
         file_id:Mapped[int] = mapped_column(ForeignKey("files.file_id"))
+
+        def __init__(self, attributes_dict) -> None:
+                self.record_id = attributes_dict["record_id"]
+                self.estimate_num_num = attributes_dict["estimate_num"]
+                self.approval= attributes_dict["approval"]
+                self.total = attributes_dict["total"]
+                self.customer_id = attributes_dict["customer_id"]
 
 class Vehicle(BASE):
         __tablename__ = "vehicles"
@@ -119,6 +137,12 @@ class Item(BASE):
         name:Mapped[str]
         description:Mapped[str]
         cost:Mapped[float]
+
+        def __init__(self, attributes_dict) -> None:
+                self.record_id = attributes_dict["record_id"]
+                self.name = attributes_dict["name"]
+                self.description = attributes_dict["description"]
+                self.cost = attributes_dict["cost"]
 
 class ItemEntry(BASE):
         __tablename__ = "item_entries"
@@ -153,6 +177,15 @@ class FileRecord(BASE):
 
         # Special Attribute
         stored_name:Mapped[str]
+
+        def __init__(self, attributes_dict) -> None:
+                self.record_id = attributes_dict["record_id"]
+                self.name = attributes_dict["name"]
+                self.size_bytes = attributes_dict["size_bytes"]
+                self.mime_type = attributes_dict["mime_type"]
+                self.date_uploaded = attributes_dict["date_uploaded"]
+                self.section_id = attributes_dict["section_id"]
+                self.stored_name = attributes_dict["stored_name"]
 
         def is_previewable(self):
                 if (self.mime_type == "pdf"):

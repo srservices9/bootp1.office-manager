@@ -8,15 +8,16 @@ class Repository:
         def __init__(self):
                 self.engine = create_engine_link()
 
-        def add_record(self, record):
+        def add_record(self, record) -> int:
                 with Session(self.engine) as session:
                         try:
                                 session.add(record)
                         except:
                                 session.rollback()
-                                raise
+                                raise Exception("Failed to add record to database.")
                         else:
                                 session.commit()
+                                return record.record_id
         def delete_record(self, record_id, record_type):
                 with Session(self.engine) as session:
                         try:
@@ -24,7 +25,7 @@ class Repository:
                                 session.delete(record)
                         except:
                                 session.rollback()
-                                raise
+                                raise Exception("Failed to delete record from database.")
                         else:
                                 session.commit()
         
