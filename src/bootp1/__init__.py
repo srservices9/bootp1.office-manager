@@ -1,21 +1,14 @@
 from flask import Flask
-from flask import render_template
 from bootp1.config import Config
+from bootp1.routes import home
 from sqlalchemy import create_engine
 
 def create_app():
     app = Flask("__name__")
     app.config.from_object(Config)
 
+    app.register_blueprint(home.home, url_prefix="")
 
-    @app.route("/")
-    def root():
-        return home()
-
-    @app.route("/home")
-    def home():
-        return render_template("home.html")
- 
     return app
 
 def create_engine_link():
