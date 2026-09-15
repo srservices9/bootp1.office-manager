@@ -8,14 +8,14 @@
 			list-style-type: none;
 			margin: 0;
 			padding: 0;
-  			width: 200px;
-  			background-color: #f1f1f1;
+			width: 200px;
+			background-color: #f1f1f1;
 			height: 100%;
 			position: fixed;
 			overflow: auto;
 		}
 
-		#section {
+		.section {
 			text-align: left;
 			padding-left: 8px;
 		}
@@ -24,6 +24,18 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+			background-color: #333333;
+		}
+
+		.tab {
+			display: block;
+			color: white;
+			padding-left: 14px;
+			padding-right: 16px;
+			text-decoration: none;
 		}
 	</style>
 
@@ -35,11 +47,13 @@
 
 	<body>
 		<menu id="sections">
-			<li id="section">Home</li>
-			<li id="section">Invoices</li>
-			<li id="section">Estimates</li>
-			<li id="section">Vehicles</li>
-			<li id="section">Insurance</li>
+			<div id="section">
+				<li group="section">Home</li>
+				<li group="section">Invoices</li>
+				<li group="section">Estimates</li>
+				<li group="section">Vehicles</li>
+				<li group="section">Insurance</li>
+			</div>
 		</menu>
 
 
@@ -49,4 +63,4 @@
 		</menu>
 	</body>
 
-</html>
+	</html>

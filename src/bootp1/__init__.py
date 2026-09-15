@@ -4,7 +4,7 @@ from bootp1.routes import home
 from sqlalchemy import create_engine
 
 def create_app():
-    app = Flask("__name__")
+    app = Flask(__name__)
     app.config.from_object(Config)
 
     app.register_blueprint(home.home, url_prefix="")
