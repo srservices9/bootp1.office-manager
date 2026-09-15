@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html, lang="en">
+
+	<style>
+		#sections {
+			top: 0;
+			left: 0;
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+  			width: 200px;
+  			background-color: #f1f1f1;
+			height: 100%;
+			position: fixed;
+			overflow: auto;
+		}
+
+		#section {
+			text-align: left;
+			padding-left: 8px;
+		}
+
+		#tabs {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+	</style>
+
+	<head>
+		{% block head %}
+		<title>{% block title %}{% endblock %}</title>
+		{% endblock %}
+	</head>
+
+	<body>
+		<menu id="sections">
+			<li id="section">Home</li>
+			<li id="section">Invoices</li>
+			<li id="section">Estimates</li>
+			<li id="section">Vehicles</li>
+			<li id="section">Insurance</li>
+		</menu>
+
+
+		<menu id="tabs">
+			{% block tabs %}
+			{% endblock %}
+		</menu>
+	</body>
+
+</html>
