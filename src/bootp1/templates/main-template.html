@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <html, lang="en">
 
 	<style>
@@ -15,9 +16,20 @@
 			overflow: auto;
 		}
 
-		.section {
+		#section_buffer {
+			padding-top: 24px;
+			padding-left: 12px;
+		}
+
+		.section:link .section:visited {
+			border: 2px solid green;
 			text-align: left;
-			padding-left: 8px;
+			text-decoration: none;
+		}
+
+		.section:hover .section:active {
+			background-color: green;
+			color: white;
 		}
 
 		#tabs {
@@ -27,12 +39,11 @@
 			list-style-type: none;
 			margin: 0;
 			padding: 0;
-			background-color: #333333;
+			background-color: #f1f1f1;
 		}
 
 		.tab {
 			display: block;
-			color: white;
 			padding-left: 14px;
 			padding-right: 16px;
 			text-decoration: none;
@@ -47,9 +58,9 @@
 
 	<body>
 		<menu id="sections">
-			<div id="section">
-				<li group="section">Home</li>
-				<li group="section">Invoices</li>
+			<div id="section_buffer">
+				<li group="section"><a href="/home">Home</a></li>
+				<li group="section"><a href="/sections/invoices">Invoices</a></li>
 				<li group="section">Estimates</li>
 				<li group="section">Vehicles</li>
 				<li group="section">Insurance</li>
@@ -61,6 +72,8 @@
 			{% block tabs %}
 			{% endblock %}
 		</menu>
+		{% block page %}
+		{% endblock %}
 	</body>
 
 	</html>
