@@ -17,17 +17,23 @@
 		}
 
 		#section_buffer {
-			padding-top: 24px;
-			padding-left: 12px;
+			margin-top: 25px;
+			margin-left: 14px;
+			margin-right: 48px;
+			border-left: 1px solid green;
+			border-right: 1px solid green;
+			border-top: 1px solid green;
 		}
 
-		.section:link .section:visited {
-			border: 2px solid green;
+		.section {
+			display: block;
 			text-align: left;
+			color: black;
+			border-bottom: 1px solid green;
 			text-decoration: none;
 		}
 
-		.section:hover .section:active {
+		.section:hover {
 			background-color: green;
 			color: white;
 		}
@@ -48,6 +54,12 @@
 			padding-right: 16px;
 			text-decoration: none;
 		}
+
+		#login {
+			margin-top: 75px;
+			margin-left: 45%;
+			display: inline-block;
+		}
 	</style>
 
 	<head>
@@ -59,11 +71,11 @@
 	<body>
 		<menu id="sections">
 			<div id="section_buffer">
-				<li group="section"><a href="/home">Home</a></li>
-				<li group="section"><a href="/sections/invoices">Invoices</a></li>
-				<li group="section">Estimates</li>
-				<li group="section">Vehicles</li>
-				<li group="section">Insurance</li>
+				<li><a class="section" href="/home">Home</a></li>
+				<li><a class="section" href="/sections/invoices">Invoices</a></li>
+				<li>Estimates</li>
+				<li>Vehicles</li>
+				<li>Insurance</li>
 			</div>
 		</menu>
 
