@@ -2,90 +2,90 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <html, lang="en">
 
-	<style>
-		#sections {
-			top: 0;
-			left: 0;
-			list-style-type: none;
-			margin: 0;
-			padding: 0;
-			width: 200px;
-			background-color: #f1f1f1;
-			height: 100%;
-			position: fixed;
-			overflow: auto;
-		}
+        <style>
+                #sections {
+                        top: 0;
+                        left: 0;
+                        list-style-type: none;
+                        margin: 0;
+                        padding: 0;
+                        width: 200px;
+                        background-color: #f1f1f1;
+                        height: 100%;
+                        position: fixed;
+                        overflow: auto;
+                }
 
-		#section_buffer {
-			margin-top: 25px;
-			margin-left: 14px;
-			margin-right: 48px;
-			border-left: 1px solid green;
-			border-right: 1px solid green;
-			border-top: 1px solid green;
-		}
+                #section_buffer {
+                        margin-top: 25px;
+                        margin-left: 14px;
+                        margin-right: 48px;
+                        border-left: 1px solid green;
+                        border-right: 1px solid green;
+                        border-top: 1px solid green;
+                }
 
-		.section {
-			display: block;
-			text-align: left;
-			color: black;
-			border-bottom: 1px solid green;
-			text-decoration: none;
-		}
+                .section {
+                        display: block;
+                        text-align: left;
+                        color: black;
+                        border-bottom: 1px solid green;
+                        text-decoration: none;
+                }
 
-		.section:hover {
-			background-color: green;
-			color: white;
-		}
+                .section:hover {
+                        background-color: green;
+                        color: white;
+                }
 
-		#tabs {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			list-style-type: none;
-			margin: 0;
-			padding: 0;
-			background-color: #f1f1f1;
-		}
+                #tabs {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        list-style-type: none;
+                        margin: 0;
+                        padding: 0;
+                        background-color: #f1f1f1;
+                }
 
-		.tab {
-			display: block;
-			padding-left: 14px;
-			padding-right: 16px;
-			text-decoration: none;
-		}
+                .tab {
+                        display: block;
+                        padding-left: 14px;
+                        padding-right: 16px;
+                        text-decoration: none;
+                }
 
-		#login {
-			margin-top: 75px;
-			margin-left: 45%;
-			display: inline-block;
-		}
-	</style>
+                #login {
+                        margin-top: 75px;
+                        margin-left: 45%;
+                        display: inline-block;
+                }
+        </style>
 
-	<head>
-		{% block head %}
-		<title>{% block title %}{% endblock %}</title>
-		{% endblock %}
-	</head>
+        <head>
+                {% block head %}
+                <title>{% block title %}{% endblock %}</title>
+                {% endblock %}
+        </head>
 
-	<body>
-		<menu id="sections">
-			<div id="section_buffer">
-				<li><a class="section" href="/home">Home</a></li>
-				<li><a class="section" href="/sections/invoices">Invoices</a></li>
-				<li>Estimates</li>
-				<li>Vehicles</li>
-				<li>Insurance</li>
-			</div>
-		</menu>
+        <body>
+                <menu id="sections">
+                        <div id="section_buffer">
+                                <li><a class="section" href="/home">Home</a></li>
+                                <li><a class="section" href="/sections/invoices">Invoices</a></li>
+                                <li><a class="section">Estimates</a></li>
+                                <li><a class="section">Vehicles</a></li>
+                                <li><a class="section">Insurance</a></li>
+                        </div>
+                </menu>
 
 
-		<menu id="tabs">
-			{% block tabs %}
-			{% endblock %}
-		</menu>
-		{% block page %}
-		{% endblock %}
-	</body>
+                <menu id="tabs">
+                        {% block tabs %}
+                        {% endblock %}
+                </menu>
+                {% block page %}
+                {% endblock %}
+        </body>
 
-	</html>
+        </html>
