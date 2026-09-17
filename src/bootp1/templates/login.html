@@ -1,11 +1,21 @@
 {% extends "home.html" %}
 
+{% block style %}
+<style>
+        #login {
+                margin-top: 75px;
+                margin-left: 45%;
+                display: inline-block;
+        }
+</style>
+{% endblock %}
+
 {% block page %}
-	<form id="login">
-		<fieldset>
-			<legend>Login</legend>
-			<input type="text" id="uname" name="uname" value="Username"><br>
-			<input type="text" id="pw" name="pw" value="Password"><br>
-		</fieldset>
-	</form>
+<form id="login">
+	<fieldset>
+		<legend>Login</legend>
+		<input type="text" id="uname" name="uname" value="Username"><br>
+		<input type="text" id="pw" name="pw" value="Password"><br>
+	</fieldset>
+</form>
 {% endblock %}

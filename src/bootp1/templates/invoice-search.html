@@ -1,0 +1,22 @@
+{% extends "invoices.html" %}
+
+{% block style %}
+<style>
+	#invoice-search {
+		margin-left: 15%;
+		margin-top: 3%;
+	}
+</style>
+{% endblock %}
+
+{% block page %}
+<form id="invoice-search">
+	<label for="customers">Search customers:</label><br>
+	<input list="customers">
+	<datalist id="customers">
+	{% for customer in customers %}
+		<option value="{{ customer }}">
+	{% endfor %}
+	</datalist>
+</form>
+{% endblock %}
