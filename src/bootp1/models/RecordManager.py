@@ -13,6 +13,17 @@ REPO = Repository()
 STORE = Storage()
 
 class RecordService:
+        def search_for_records(self, type_value: str, filters=None):
+                try:
+                        record_type = self.get_record_type(type_value)
+                        if record_type is Invoice:
+                                return REPO.search_invoices(filters)
+                        if record_type is Customer:
+                                return REPO.search_customers(filters)
+                                        
+                except:
+                        print(Exception)
+
         def new_record(self, type_value: str, record_attributes: dict) -> int | None:
                 try:
                         record = self.get_record_type(type_value)(record_attributes)
@@ -64,6 +75,8 @@ class RecordService:
                                 return ItemEntry
                         case "FILE":
                                 return FileRecord
+                        case "CUSTOMER":
+                                return Customer
                         case _:
                                 raise ValueError("Invalid Record Type")
 
@@ -77,7 +90,7 @@ class FileService:
                 # TODO Call record_delete on RecordService class and FileDelete on FileManager
                 record_id
 
-# -----------------------Start of sections------------------------------
+# -----------------------Start of records------------------------------
 # Frontend will be separated by sections.
 # Each section will have an entry with file upload for supporting documentation.
 # NOTE App core will call FileService.upload to add file to db,
@@ -110,13 +123,13 @@ class Estimate(BASE):
         total:Mapped[float]
 
         # Foreign Keys
-        customer_id:Mapped[int] = mapped_column(ForeignKey("customers.customer_id"))
+        customer_id:Mapped[int] = mapped_column(ForeignKey("customers.record_id"))
         file_id:Mapped[int] = mapped_column(ForeignKey("files.file_id"))
 
         def __init__(self, attributes_dict) -> None:
                 self.record_id = attributes_dict["record_id"]
-                self.estimate_num_num = attributes_dict["estimate_num"]
-                self.approval= attributes_dict["approval"]
+                self.estimate_num = attributes_dict["estimate_num"]
+                self.approval = attributes_dict["approval"]
                 self.total = attributes_dict["total"]
                 self.customer_id = attributes_dict["customer_id"]
 
@@ -128,7 +141,23 @@ class Insurance(BASE):
         __tablename__ = "insurances"
         # Attributes
 
-# -----------------------End of sections--------------------------------
+class Customer(BASE):
+        # Attributes
+        __tablename__ = "customers"
+        record_id:Mapped[int] = mapped_column(primary_key=True)
+        name:Mapped[str]
+        contact_first_name:Mapped[str]
+        contact_last_name:Mapped[str]
+        contact_phone:Mapped[str]
+
+        def __init__(self, attributes_dict) -> None:
+                self.record_id = attributes_dict["record_id"]
+                self.name = attributes_dict["name"]
+                self.contact_first_name = attributes_dict["contact_first_name"]
+                self.contact_last_name = attributes_dict["contact_last_name"]
+                self.contact_phone = attributes_dict["contact_phone"]
+
+# -----------------------End of records--------------------------------
 # -----------------------Start of items---------------------------------
 class Item(BASE):
         __tablename__ = "items"

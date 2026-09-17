@@ -1,8 +1,10 @@
-from sqlalchemy import Update
+from re import search
+
+from sqlalchemy import Update, select
 from sqlalchemy.orm import Session
 
 from bootp1.__init__ import create_engine_link
-from bootp1.models.RecordManager import FileRecord
+from bootp1.models.RecordManager import Customer, FileRecord, Invoice
 
 class Repository:
         def __init__(self):
@@ -66,4 +68,37 @@ class Repository:
                                 raise
                         else:
                                 session.commit()
+#------------------------------SECTION SEARCH METHODS----------------------------------
+        def search_customers(self, filters=None):
+                with Session(self.engine) as session:
+                        try:
+                                stmt = select(Customer)
+                                if filters == None:
+                                        return session.execute(stmt)
+                                if "name" in filters:
+                                        stmt.where(Customer.name.ilike(f"%{filters["name"]}%"))
 
+                                return session.execute(stmt)
+                        except:
+                                session.rollback()
+                                raise
+        def search_invoices(self, filters=None):
+                with Session(self.engine) as session:
+                        try:
+                                stmt = select(Invoice)
+                                if filters == None:
+                                        return session.execute(stmt)
+                                if "name" in filters:
+                                        customer = self.search_customers({"name": filters["name"]}).one()
+                                        customer_id = customer[0].customer_id
+                                        stmt.where(Invoice.customer_id == customer_id)
+                                if "invoice_num" in filters:
+                                        stmt.where(Invoice.invoice_num.ilike(f"%{filters["invoice_num"]}%"))
+                                if "min_total" and "max_total" in filters:
+                                        stmt.where(filters["min_total"] <= Invoice.total <= filters["max_total"])
+
+                                return session.execute(stmt)
+
+                        except:
+                                session.rollback()
+                                raise
