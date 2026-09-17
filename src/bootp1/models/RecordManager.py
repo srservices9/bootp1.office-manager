@@ -1,14 +1,7 @@
-from datetime import datetime
-from enum import Enum, auto
-
-from sqlalchemy import DateTime, ForeignKey, except_, func
-from sqlalchemy.orm import relationship, Mapped, mapped_column
-from sqlalchemy.ext.declarative import declarative_base
-
+from bootp1.models.Tables import *
 from bootp1.models.DatabaseManager import Repository
 from bootp1.models.FileStorage import Storage
 
-BASE = declarative_base()
 REPO = Repository()
 STORE = Storage()
 
@@ -71,8 +64,6 @@ class RecordService:
                                 return Insurance
                         case "ITEM":
                                 return Item
-                        case "ITEM_ENTRY":
-                                return ItemEntry
                         case "FILE":
                                 return FileRecord
                         case "CUSTOMER":
@@ -88,152 +79,5 @@ class FileService:
 
         def delete(self, record_id, file_id):
                 # TODO Call record_delete on RecordService class and FileDelete on FileManager
-                record_id
+                pass
 
-# -----------------------Start of records------------------------------
-# Frontend will be separated by sections.
-# Each section will have an entry with file upload for supporting documentation.
-# NOTE App core will call FileService.upload to add file to db,
-# Then it will link the file record with the section record with the file_id returned from upload method.
-class Invoice(BASE):
-        __tablename__ = "invoices"
-        # Attributes
-        record_id:Mapped[int] = mapped_column(primary_key=True)
-        invoice_num:Mapped[str]
-        terms:Mapped[str]
-        total:Mapped[float]
-
-        # Foreign Keys
-        customer_id:Mapped[int] = mapped_column(ForeignKey("customers.customer_id"))
-        file_id:Mapped[int] = mapped_column(ForeignKey("files.file_id"))
-
-        def __init__(self, attributes_dict) -> None:
-                self.record_id = attributes_dict["record_id"]
-                self.invoice_num = attributes_dict["invoice_num"]
-                self.terms = attributes_dict["terms"]
-                self.total = attributes_dict["total"]
-                self.customer_id = attributes_dict["customer_id"]
-
-class Estimate(BASE):
-        __tablename__ = "estimates"
-        # Attributes
-        record_id:Mapped[int] = mapped_column(primary_key=True)
-        estimate_num:Mapped[str]
-        approval:Mapped[bool]
-        total:Mapped[float]
-
-        # Foreign Keys
-        customer_id:Mapped[int] = mapped_column(ForeignKey("customers.record_id"))
-        file_id:Mapped[int] = mapped_column(ForeignKey("files.file_id"))
-
-        def __init__(self, attributes_dict) -> None:
-                self.record_id = attributes_dict["record_id"]
-                self.estimate_num = attributes_dict["estimate_num"]
-                self.approval = attributes_dict["approval"]
-                self.total = attributes_dict["total"]
-                self.customer_id = attributes_dict["customer_id"]
-
-class Vehicle(BASE):
-        __tablename__ = "vehicles"
-        # Attributes
-
-class Insurance(BASE):
-        __tablename__ = "insurances"
-        # Attributes
-
-class Customer(BASE):
-        # Attributes
-        __tablename__ = "customers"
-        record_id:Mapped[int] = mapped_column(primary_key=True)
-        name:Mapped[str]
-        contact_first_name:Mapped[str]
-        contact_last_name:Mapped[str]
-        contact_phone:Mapped[str]
-
-        def __init__(self, attributes_dict) -> None:
-                self.record_id = attributes_dict["record_id"]
-                self.name = attributes_dict["name"]
-                self.contact_first_name = attributes_dict["contact_first_name"]
-                self.contact_last_name = attributes_dict["contact_last_name"]
-                self.contact_phone = attributes_dict["contact_phone"]
-
-# -----------------------End of records--------------------------------
-# -----------------------Start of items---------------------------------
-class Item(BASE):
-        __tablename__ = "items"
-        # Attributes
-        record_id:Mapped[int] = mapped_column(primary_key=True)
-        name:Mapped[str]
-        description:Mapped[str]
-        cost:Mapped[float]
-
-        def __init__(self, attributes_dict) -> None:
-                self.record_id = attributes_dict["record_id"]
-                self.name = attributes_dict["name"]
-                self.description = attributes_dict["description"]
-                self.cost = attributes_dict["cost"]
-
-class ItemEntry(BASE):
-        __tablename__ = "item_entries"
-        # Attributes
-        record_id:Mapped[int] = mapped_column(primary_key=True)
-        description:Mapped[str]
-        quantity:Mapped[int]
-        rate:Mapped[float]
-        amount:Mapped[float]
-
-        # Foreign Keys
-        invoice_id:Mapped[int] = mapped_column(ForeignKey("invoices.invoice_id"))
-        estimate_id:Mapped[int] = mapped_column(ForeignKey("estimates.estimate_id"))
-        item_id:Mapped[int] = mapped_column(ForeignKey("items.item_id"))
-        
-# -----------------------End of items-----------------------------------
-# -----------------------Start of Files---------------------------------
-class FileRecord(BASE):
-        __tablename__ = "files"
-        # Attributes
-        record_id:Mapped[int] = mapped_column(primary_key=True)
-        name:Mapped[str]
-        size_bytes:Mapped[int]
-        mime_type:Mapped[str]
-        date_uploaded:Mapped[datetime] = mapped_column(DateTime(timezone=True),
-                                                       server_default=func.now())
-        # Foreign Keys
-        section_id:Mapped[int] = mapped_column(ForeignKey("sections.section_id"))
-        
-        # Relationships
-        invoices:Mapped[Invoice] = relationship(back_populates="invoices")
-
-        # Special Attribute
-        stored_name:Mapped[str]
-
-        def __init__(self, attributes_dict) -> None:
-                self.record_id = attributes_dict["record_id"]
-                self.name = attributes_dict["name"]
-                self.size_bytes = attributes_dict["size_bytes"]
-                self.mime_type = attributes_dict["mime_type"]
-                self.date_uploaded = attributes_dict["date_uploaded"]
-                self.section_id = attributes_dict["section_id"]
-                self.stored_name = attributes_dict["stored_name"]
-
-        def is_previewable(self):
-                if (self.mime_type == "pdf"):
-                        return True
-                else: return False
-
-class SectionTag(BASE):
-        __tablename__ = "sections"
-        # Attributes
-        section_id:Mapped[int] = mapped_column(primary_key=True)
-        name:Mapped[str]
-        # Relationships
-        files:Mapped[FileRecord] = relationship(back_populates="sections")
-
-class Filters(Enum):
-        # Declaring filters for the search function in REPO as enums to specify filter options
-        FILE_NAME = auto()
-        DATE_RANGE = auto()
-        SECTION = auto()
-        AMOUNT = auto()
-
-# ----------------------End of Files--------------------------------------

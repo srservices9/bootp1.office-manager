@@ -1,14 +1,13 @@
-from re import search
-
 from sqlalchemy import Update, select
 from sqlalchemy.orm import Session
 
 from bootp1.__init__ import create_engine_link
-from bootp1.models.RecordManager import Customer, FileRecord, Invoice
+from bootp1.models.Tables import *
 
 class Repository:
         def __init__(self):
                 self.engine = create_engine_link()
+                Base.metadata.create_all(self.engine)
 
         def add_record(self, record) -> int:
                 with Session(self.engine) as session:

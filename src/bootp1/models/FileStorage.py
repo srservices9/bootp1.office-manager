@@ -1,6 +1,6 @@
-from flask_wtf import FlaskForm
+#from flask_wtf import FlaskForm
 
-from bootp1.models.filemanager.FileManager import FileRecord, SectionTag
+from bootp1.models.Tables import FileRecord, SectionTag
 
 class Storage:
     def store(self, file_stream, file_name, file_type, section_id):
@@ -12,6 +12,8 @@ class Storage:
 
     def open(self, stored_name):
         # TODO: opens file and return file stream.
+        pass
 
     def delete(self, stored_name):
         # TODO: removes file from uploads directory.
+        pass

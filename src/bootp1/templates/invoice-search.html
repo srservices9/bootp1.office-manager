@@ -11,12 +11,14 @@
 
 {% block page %}
 <form id="invoice-search">
-	<label for="customers">Search customers:</label><br>
-	<input list="customers">
+	<label for="customers">Search by customer:</label><br>
+	<input list="customers" {% if not customers %}placeholder="No customers"{% endif %}>
 	<datalist id="customers">
+	{% if customers %}
 	{% for customer in customers %}
 		<option value="{{ customer }}">
 	{% endfor %}
+	{% endif %}
 	</datalist>
 </form>
 {% endblock %}
