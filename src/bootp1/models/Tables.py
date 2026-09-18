@@ -65,9 +65,9 @@ class Customer(Base):
         __tablename__ = "customers"
         record_id:Mapped[int] = mapped_column(primary_key=True)
         name:Mapped[str]
-        contact_first_name:Mapped[str]
-        contact_last_name:Mapped[str]
-        contact_phone:Mapped[str]
+        contact_first_name:Mapped[str] = mapped_column(nullable=True)
+        contact_last_name:Mapped[str] = mapped_column(nullable=True)
+        contact_phone:Mapped[str] = mapped_column(nullable=True)
 
         def __init__(self, attributes_dict) -> None:
                 self.record_id = attributes_dict["record_id"]
