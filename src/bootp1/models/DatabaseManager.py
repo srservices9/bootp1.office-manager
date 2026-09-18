@@ -67,8 +67,10 @@ class Repository:
                                 raise
                         else:
                                 session.commit()
+
 #------------------------------SECTION SEARCH METHODS----------------------------------
-        def search_customers(self, filters=None):
+
+        def search_customers(self, filters):
                 with Session(self.engine) as session:
                         try:
                                 stmt = select(Customer)
@@ -81,6 +83,7 @@ class Repository:
                         except:
                                 session.rollback()
                                 raise
+
         def search_invoices(self, filters=None):
                 with Session(self.engine) as session:
                         try:
@@ -97,7 +100,7 @@ class Repository:
                                         stmt.where(filters["min_total"] <= Invoice.total <= filters["max_total"])
 
                                 return session.execute(stmt)
-
                         except:
                                 session.rollback()
                                 raise
+

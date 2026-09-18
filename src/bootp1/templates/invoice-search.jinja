@@ -2,9 +2,9 @@
 
 {% block style %}
 <style>
-	#invoice-search {
-		margin-top: 45px;
-		padding-left: 10px;
+	#invoice-search-by-customer {
+		margin-top: 50px;
+		padding-left: 40px;
                 justify-content: left;
                 align-items: center;
                 list-style-type: none;
@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block page %}
-<form id="invoice-search">
+<form id="invoice-search-by-customer">
 	<label for="customers">Search by customer:</label><br>
 	<input list="customers" {% if not customers %}placeholder="No customers"{% endif %}>
 	<datalist id="customers">
