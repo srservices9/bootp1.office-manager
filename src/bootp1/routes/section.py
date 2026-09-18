@@ -10,4 +10,4 @@ section = Blueprint("section", __name__, template_folder="templates")
 @section.route("")
 def invoice():
         CUSTOMERS = RECORDS.search_for_records("CUSTOMER")
-        return render_template("invoice-search.html", customers=CUSTOMERS)
+        return render_template("invoice-search.jinja", customers=CUSTOMERS)
