@@ -1,7 +1,25 @@
 {% extends "customers.jinja" %}
 
 {% block style %}
+<style>
+        #ncustomer {
+                margin-top: 75px;
+                justify-content: center;
+                align-items: center;
+                display: flex;
+        }
+</style>
 {% endblock %}
 
 {% block page %}
+<form id="ncustomer">
+	<fieldset>
+		<legend>Add Customer</legend>
+		<input type="text" id="cname" name="cname" placeholder="Customer Name"><br>
+		<input type="text" id="ct_fname" name="ct_fname" placeholder="Contact First Name"><br>
+		<input type="text" id="ct_lname" name="ct_lname" placeholder="Contact Last Name"><br>
+		<input type="text" id="ct_phone" name="ct_phone" placeholder="Contact Phone Number"><br>
+	</fieldset>
+        <button type="submit" id="ncustomer_submit">Submit</button>
+</form>
 {% endblock %}

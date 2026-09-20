@@ -15,3 +15,7 @@ def invoice():
 def customer():
         CUSTOMERS = RECORDS.search_for_records("CUSTOMER")
         return render_template("customer-search.jinja", customers=CUSTOMERS)
+
+@section.route("/customers/new-customer")
+def new_customer():
+        return render_template("new-customer.jinja")
