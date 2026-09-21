@@ -17,13 +17,14 @@ class Invoice(Base):
 
         # Foreign Keys
         customer_id:Mapped[int] = mapped_column(ForeignKey("customers.record_id"))
-        file_id:Mapped[int] = mapped_column(ForeignKey("files.record_id"), nullable=True)
+        file_id:Mapped[Optional[int]] = mapped_column(ForeignKey("files.record_id"))
 
         # Relationships
         file:Mapped[Optional["FileRecord"]] = relationship(back_populates="invoice")
 
         def __init__(self, attributes_dict) -> None:
-                self.record_id = attributes_dict["record_id"]
+                if "record_id" in attributes_dict:
+                        self.record_id = attributes_dict["record_id"]
                 self.invoice_num = attributes_dict["invoice_num"]
                 self.terms = attributes_dict["terms"]
                 self.total = attributes_dict["total"]
@@ -39,7 +40,7 @@ class Estimate(Base):
 
         # Foreign Keys
         customer_id:Mapped[int] = mapped_column(ForeignKey("customers.record_id"))
-        file_id:Mapped[int] = mapped_column(ForeignKey("files.record_id"), nullable=True)
+        file_id:Mapped[Optional[int]] = mapped_column(ForeignKey("files.record_id"))
 
         def __init__(self, attributes_dict) -> None:
                 self.record_id = attributes_dict["record_id"]

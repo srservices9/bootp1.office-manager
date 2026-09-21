@@ -91,8 +91,8 @@ class Repository:
                                 if filters == None:
                                         return session.execute(stmt)
                                 if "name" in filters:
-                                        customer = dict(self.search_customers({"name": filters["name"]})[0])
-                                        customer_id = customer["record_id"]
+                                        customer = self.search_customers({"name": filters["name"]})[0][0]
+                                        customer_id = customer.record_id
                                         stmt.where(Invoice.customer_id == customer_id)
                                 if "invoice_num" in filters:
                                         stmt.where(Invoice.invoice_num.ilike(f"%{filters["invoice_num"]}%"))

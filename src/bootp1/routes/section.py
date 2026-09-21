@@ -5,27 +5,59 @@ RECORDS = RecordService()
 
 section = Blueprint("section", __name__, template_folder="templates")
 
+def get_customer_list():
+        customer_rows = RECORDS.search_for_records("CUSTOMER")
+        CUSTOMERS = None
+        if customer_rows:
+                CUSTOMERS = []
+                for customer in customer_rows:
+                        customer_name = customer[0].name
+                        CUSTOMERS.append(customer_name)
+
+        return CUSTOMERS
+
+#------------------------------Invoices-----------------------------
 @section.route("/invoices")
 @section.route("")
 def invoice():
-        customer_rows = RECORDS.search_for_records("CUSTOMER")
-        CUSTOMERS = None
-        if customer_rows:
-                CUSTOMERS = []
-                for customer in customer_rows:
-                        customer_name = customer[0].name
-                        CUSTOMERS.append(customer_name)
+        CUSTOMERS = get_customer_list()
         return render_template("invoice-search.jinja", customers=CUSTOMERS)
+
+@section.route("/invoices/new-invoice", methods=("GET", "POST"))
+def new_invoice():
+        if request.method == "POST":
+                invoice_attributes = {}
+                error = None 
+                invoice_attributes["invoice_num"] = request.form["inv_num"]
+                invoice_attributes["terms"] = request.form["terms"]
+                invoice_attributes["total"] = request.form["total"]
+                invoice_attributes["customer_id"] = request.form["customer"]
+                if not invoice_attributes["invoice_num"]:
+                        error = "Customer name is required"
+                elif not invoice_attributes["terms"]:
+                        error = "Terms are required"
+                elif not invoice_attributes["total"]:
+                        error = "Total amount is required"
+                elif not invoice_attributes["customer_id"]:
+                        error = "Customer is required"
+
+                if error is None:
+                        try:
+                                print(invoice_attributes)
+                                RECORDS.new_record("INVOICE", invoice_attributes)
+                        except:
+                                error = "Failed to add invoice"
+                        else:
+                                return redirect("/sections/invoices")
+
+                flash(error)
+                
+        return render_template("new-invoice.jinja")
+#------------------------------Customers-----------------------------
 
 @section.route("/customers")
 def customer():
-        customer_rows = RECORDS.search_for_records("CUSTOMER")
-        CUSTOMERS = None
-        if customer_rows:
-                CUSTOMERS = []
-                for customer in customer_rows:
-                        customer_name = customer[0].name
-                        CUSTOMERS.append(customer_name)
+        CUSTOMERS = get_customer_list()
         return render_template("customer-search.jinja", customers=CUSTOMERS)
 
 @section.route("/customers/new-customer", methods=("GET", "POST"))
@@ -55,3 +87,5 @@ def new_customer():
                 flash(error)
                 
         return render_template("new-customer.jinja")
+
+#------------------------------Customers-----------------------------
