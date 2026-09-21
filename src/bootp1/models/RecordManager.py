@@ -1,3 +1,4 @@
+import traceback
 from bootp1.models.Tables import *
 from bootp1.models.DatabaseManager import Repository
 from bootp1.models.FileStorage import Storage
@@ -9,21 +10,24 @@ class RecordService:
         def search_for_records(self, type_value: str, filters=None):
                 try:
                         record_type = self.get_record_type(type_value)
+                        print("search test")
                         if record_type is Invoice:
                                 return REPO.search_invoices(filters)
                         if record_type is Customer:
                                 return REPO.search_customers(filters)
                                         
                 except:
-                        print(Exception)
+                        traceback.print_exc()
 
         def new_record(self, type_value: str, record_attributes: dict) -> int | None:
                 try:
+                        print(record_attributes)
                         record = self.get_record_type(type_value)(record_attributes)
+                        print(record)
                         record_id = REPO.add_record(record)
                         return record_id
-                except Exception:
-                        print(Exception)
+                except:
+                        traceback.print_exc()
 
         def upload_file(self, record_id: int, type_value: str, file_attributes: dict, file_stream) -> None:
                 try:

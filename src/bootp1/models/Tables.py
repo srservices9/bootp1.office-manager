@@ -1,6 +1,7 @@
 from datetime import datetime
+from typing import List, Optional
 
-from sqlalchemy import DateTime, ForeignKey, except_, func, null
+from sqlalchemy import DateTime, ForeignKey, func, null
 from sqlalchemy.orm import DeclarativeBase, relationship, Mapped, mapped_column
 
 class Base(DeclarativeBase):
@@ -17,6 +18,9 @@ class Invoice(Base):
         # Foreign Keys
         customer_id:Mapped[int] = mapped_column(ForeignKey("customers.record_id"))
         file_id:Mapped[int] = mapped_column(ForeignKey("files.record_id"), nullable=True)
+
+        # Relationships
+        file:Mapped[Optional["FileRecord"]] = relationship(back_populates="invoice")
 
         def __init__(self, attributes_dict) -> None:
                 self.record_id = attributes_dict["record_id"]
@@ -65,16 +69,21 @@ class Customer(Base):
         __tablename__ = "customers"
         record_id:Mapped[int] = mapped_column(primary_key=True)
         name:Mapped[str]
-        contact_first_name:Mapped[str] = mapped_column(nullable=True)
-        contact_last_name:Mapped[str] = mapped_column(nullable=True)
-        contact_phone:Mapped[str] = mapped_column(nullable=True)
+        contact_first_name:Mapped[Optional[str]]
+        contact_last_name:Mapped[Optional[str]]
+        contact_phone:Mapped[Optional[str]]
 
         def __init__(self, attributes_dict) -> None:
-                self.record_id = attributes_dict["record_id"]
-                self.name = attributes_dict["name"]
-                self.contact_first_name = attributes_dict["contact_first_name"]
-                self.contact_last_name = attributes_dict["contact_last_name"]
-                self.contact_phone = attributes_dict["contact_phone"]
+                if "record_id" in attributes_dict: 
+                        self.record_id = attributes_dict["record_id"]
+                if "name" in attributes_dict: 
+                        self.name = attributes_dict["name"]
+                if "contact_first_name" in attributes_dict: 
+                        self.contact_first_name = attributes_dict["contact_first_name"]
+                if "contact_last_name" in attributes_dict: 
+                        self.contact_last_name = attributes_dict["contact_last_name"]
+                if "contact_phone" in attributes_dict: 
+                        self.contact_phone = attributes_dict["contact_phone"]
 
 # -----------------------End of records--------------------------------
 # -----------------------Start of items---------------------------------
@@ -121,7 +130,8 @@ class FileRecord(Base):
         section_id:Mapped[int] = mapped_column(ForeignKey("sections.section_id"))
         
         # Relationships
-        invoices:Mapped[Invoice] = relationship(back_populates="invoices")
+        section:Mapped[List["SectionTag"]] = relationship(back_populates="file")
+        invoice:Mapped[Invoice] = relationship(back_populates="file")
 
         # Special Attribute
         stored_name:Mapped[str]
@@ -146,6 +156,6 @@ class SectionTag(Base):
         section_id:Mapped[int] = mapped_column(primary_key=True)
         name:Mapped[str]
         # Relationships
-        files:Mapped[FileRecord] = relationship(back_populates="sections")
+        file:Mapped[FileRecord] = relationship(back_populates="section")
 
 # ----------------------End of Files--------------------------------------
