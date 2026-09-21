@@ -10,7 +10,6 @@ class RecordService:
         def search_for_records(self, type_value: str, filters=None):
                 try:
                         record_type = self.get_record_type(type_value)
-                        print("search test")
                         if record_type is Invoice:
                                 return REPO.search_invoices(filters)
                         if record_type is Customer:
@@ -21,9 +20,7 @@ class RecordService:
 
         def new_record(self, type_value: str, record_attributes: dict) -> int | None:
                 try:
-                        print(record_attributes)
                         record = self.get_record_type(type_value)(record_attributes)
-                        print(record)
                         record_id = REPO.add_record(record)
                         return record_id
                 except:
@@ -39,22 +36,22 @@ class RecordService:
                         
                         record_type = self.get_record_type(type_value)
                         REPO.add_file_to_record(file_id, record_id, record_type)
-                except Exception:
-                        print(Exception)
+                except:
+                        traceback.print_exc()
 
         def modify_record(self, record_id: int, type_value: str, updates: dict) -> None:
                 try:
                         record_type = self.get_record_type(type_value)
                         REPO.update_record(record_id, record_type, updates)
-                except Exception:
-                        print(Exception)
+                except:
+                        traceback.print_exc()
 
         def delete_record(self, record_id: int, type_value: str) -> None:
                 try:
                         record_type = self.get_record_type(type_value)
                         REPO.delete_record(record_id, record_type)
-                except Exception:
-                        print(Exception)
+                except:
+                        traceback.print_exc()
 
         def get_record_type(self, type_value: str):
                 match type_value:

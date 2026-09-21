@@ -75,11 +75,11 @@ class Repository:
                         try:
                                 stmt = select(Customer)
                                 if filters == None:
-                                        return session.execute(stmt).fetchall()
+                                        return session.scalars(stmt).all()
                                 if "name" in filters:
                                         stmt.where(Customer.name.ilike(f"%{filters["name"]}%"))
 
-                                return session.execute(stmt).fetchall()
+                                return session.scalars(stmt).all()
                         except:
                                 session.rollback()
                                 raise
@@ -91,15 +91,17 @@ class Repository:
                                 if filters == None:
                                         return session.execute(stmt)
                                 if "name" in filters:
-                                        customer = self.search_customers({"name": filters["name"]})[0][0]
-                                        customer_id = customer.record_id
+                                        customer = self.search_customers({"name": filters["name"]})
+                                        if len(customer) != 1:
+                                                raise Exception("No customers or multiple customers found")
+                                        customer_id = customer[0].record_id
                                         stmt.where(Invoice.customer_id == customer_id)
                                 if "invoice_num" in filters:
                                         stmt.where(Invoice.invoice_num.ilike(f"%{filters["invoice_num"]}%"))
                                 if "min_total" and "max_total" in filters:
                                         stmt.where(filters["min_total"] <= Invoice.total <= filters["max_total"])
 
-                                return session.execute(stmt).fetchall()
+                                return session.scalars(stmt).all()
                         except:
                                 session.rollback()
                                 raise

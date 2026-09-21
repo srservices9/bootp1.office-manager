@@ -20,7 +20,7 @@
 	<datalist id="customers">
 	{% if customers %}
 	{% for customer in customers %}
-		<option value="{{ customer }}">
+		<option value="{{ customer.name }}">
 	{% endfor %}
 	{% endif %}
 	</datalist>

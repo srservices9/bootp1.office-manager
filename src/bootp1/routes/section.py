@@ -6,14 +6,7 @@ RECORDS = RecordService()
 section = Blueprint("section", __name__, template_folder="templates")
 
 def get_customer_list():
-        customer_rows = RECORDS.search_for_records("CUSTOMER")
-        CUSTOMERS = None
-        if customer_rows:
-                CUSTOMERS = []
-                for customer in customer_rows:
-                        customer_name = customer[0].name
-                        CUSTOMERS.append(customer_name)
-
+        CUSTOMERS = RECORDS.search_for_records("CUSTOMER")
         return CUSTOMERS
 
 #------------------------------Invoices-----------------------------
@@ -25,6 +18,9 @@ def invoice():
 
 @section.route("/invoices/new-invoice", methods=("GET", "POST"))
 def new_invoice():
+        CUSTOMERS = get_customer_list()
+        TERMS = ["net 30", "net 15", "net 0"]
+
         if request.method == "POST":
                 invoice_attributes = {}
                 error = None 
@@ -34,8 +30,8 @@ def new_invoice():
                 invoice_attributes["customer_id"] = request.form["customer"]
                 if not invoice_attributes["invoice_num"]:
                         error = "Customer name is required"
-                elif not invoice_attributes["terms"]:
-                        error = "Terms are required"
+                elif not invoice_attributes["terms"] or invoice_attributes["terms"] not in TERMS:
+                        error = "Terms are missing or not valid"
                 elif not invoice_attributes["total"]:
                         error = "Total amount is required"
                 elif not invoice_attributes["customer_id"]:
@@ -52,7 +48,7 @@ def new_invoice():
 
                 flash(error)
                 
-        return render_template("new-invoice.jinja")
+        return render_template("new-invoice.jinja", customers=CUSTOMERS, terms=TERMS)
 #------------------------------Customers-----------------------------
 
 @section.route("/customers")
