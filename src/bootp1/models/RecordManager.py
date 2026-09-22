@@ -16,7 +16,7 @@ class RecordService:
                                 return REPO.search_customers(filters)
                                         
                 except:
-                        raise
+                        traceback.print_exc()
 
         def new_record(self, type_value: str, record_attributes: dict) -> int | None:
                 try:

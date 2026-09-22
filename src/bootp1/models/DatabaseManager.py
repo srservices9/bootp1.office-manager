@@ -70,7 +70,6 @@ class Repository:
                                 session.commit()
 
 #------------------------------SECTION SEARCH METHODS----------------------------------
-
         def search_customers(self, filters):
                 with Session(self.engine) as session:
                         try:
@@ -81,11 +80,11 @@ class Repository:
                                         stmt.where(Customer.name == filters["name"])
                                 if "name" in filters and "match" not in filters:
                                         stmt.where(Customer.name.ilike(f"%{filters["name"]}%"))
-
-                                return session.scalars(stmt).all()
                         except:
                                 session.rollback()
                                 raise
+                        else:
+                                return session.scalars(stmt).all()
 
         def search_invoices(self, filters=None):
                 with Session(self.engine) as session:
@@ -103,9 +102,9 @@ class Repository:
                                         stmt.where(filters["min_total"] <= Invoice.total)
                                 if "max_total" in filters and "min_total" not in filters:
                                         stmt.where(Invoice.total <= filters["max_total"])
-
-                                return session.scalars(stmt).all()
                         except:
                                 session.rollback()
                                 raise
+                        else:
+                                return session.scalars(stmt).all()
 

@@ -1,5 +1,6 @@
 from flask import Blueprint, flash, redirect, request, render_template
 from bootp1.models.RecordManager import RecordService
+from bootp1.models.DatabaseManager import Repository
 from sqlalchemy.exc import IntegrityError
 
 RECORDS = RecordService()
@@ -43,6 +44,7 @@ def invoice():
                         if error is None:
                                 try:
                                         INVOICES = RECORDS.search_for_records("INVOICE", filters)
+                                        print(INVOICES)
                                 except:
                                         error = "Failed to find invoices"
                                 else:

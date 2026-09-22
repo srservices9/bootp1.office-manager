@@ -20,7 +20,7 @@ class Invoice(Base):
         file_id:Mapped[Optional[int]] = mapped_column(ForeignKey("files.record_id"))
 
         # Relationships
-        customer:Mapped["Customer"] = relationship()
+        customer:Mapped["Customer"] = relationship(lazy="selectin")
         file:Mapped[Optional["FileRecord"]] = relationship(back_populates="invoice")
 
         def __init__(self, attributes_dict) -> None:
