@@ -2,7 +2,7 @@
 
 {% block style %}
 <style>
-	#invoice-search-by-customer {
+	#inv-search {
 		margin-top: 50px;
 		padding-left: 40px;
                 justify-content: left;
@@ -10,19 +10,55 @@
                 list-style-type: none;
 		display: flex;
 	}
+
+	#inv-table {
+		padding-left:80px;
+		justify-content:left;
+		align-items: center;
+		display: flex;
+	}
 </style>
 {% endblock %}
 
 {% block page %}
-<form id="invoice-search-by-customer">
-	<label for="customers">Search by customer:</label><br>
-	<input list="customers" {% if not customers %}placeholder="No customers"{% endif %}>
-	<datalist id="customers">
-	{% if customers %}
-	{% for customer in customers %}
-		<option value="{{ customer.name }}">
+<form id="inv-search" method="POST">
+	<fieldset>
+		<legend>Search for invoices</legend>
+		<label for="customers">Search by customer:</label><br>
+		<input id="customer" name ="customer" list="customers" {% if not customers %}placeholder="No customers"{% endif %}>
+		<datalist id="customers">
+		{% if customers %}
+		{% for customer in customers %}
+			<option value="{{ customer.name }}">
+		{% endfor %}
+		{% endif %}
+		</datalist>
+		<label for="inv_num">Search by invoice number</label>
+		<input type="text" id="inv_num" name="inv_num" placeholder="Invoice Number">
+		<label for="min_total">Minimum value</label>
+		<input type="number" id="min_total" name="min_total" min="0" step=".01">
+		<label for="max_total">Maximum value</label>
+		<input type="number" id="max_total" name="max_total" min="0" step=".01">
+		<button type="submit" id="inv-search-submit">Submit</button>
+	</fieldset>
+</form><br>
+
+<table id="inv-table">
+	<tr>
+		<th>Invoice#</th>
+		<th>Customer</th>
+		<th>Terms</th>
+		<th>Total</th>
+	</tr>
+	{% if invoices %}
+	{% for invoice in invoices %}
+	<tr>
+		<td>{{ invoice.invoice_num }}</td>
+		<td>{{ invoice.customer.name }}</td>
+		<td>{{ invoice.terms }}</td>
+		<td>{{ invoice.total }}</td>
+	</tr>
 	{% endfor %}
 	{% endif %}
-	</datalist>
-</form>
+</table>
 {% endblock %}

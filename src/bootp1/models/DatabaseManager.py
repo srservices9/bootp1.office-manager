@@ -7,6 +7,7 @@ from bootp1.models.Tables import *
 class Repository:
         def __init__(self):
                 self.engine = create_engine_link()
+                # Base.metadata.drop_all(self.engine)
                 Base.metadata.create_all(self.engine)
 
         def add_record(self, record) -> int:
@@ -15,7 +16,7 @@ class Repository:
                                 session.add(record)
                         except:
                                 session.rollback()
-                                raise Exception("Failed to add record to database.")
+                                raise
                         else:
                                 session.commit()
                                 return record.record_id
@@ -76,7 +77,9 @@ class Repository:
                                 stmt = select(Customer)
                                 if filters == None:
                                         return session.scalars(stmt).all()
-                                if "name" in filters:
+                                if "name" in filters and "match" in filters:
+                                        stmt.where(Customer.name == filters["name"])
+                                if "name" in filters and "match" not in filters:
                                         stmt.where(Customer.name.ilike(f"%{filters["name"]}%"))
 
                                 return session.scalars(stmt).all()
@@ -90,16 +93,16 @@ class Repository:
                                 stmt = select(Invoice)
                                 if filters == None:
                                         return session.execute(stmt)
-                                if "name" in filters:
-                                        customer = self.search_customers({"name": filters["name"]})
-                                        if len(customer) != 1:
-                                                raise Exception("No customers or multiple customers found")
-                                        customer_id = customer[0].record_id
-                                        stmt.where(Invoice.customer_id == customer_id)
+                                if "customer_id" in filters:
+                                        stmt.where(Invoice.customer_id == filters["customer_id"])
                                 if "invoice_num" in filters:
                                         stmt.where(Invoice.invoice_num.ilike(f"%{filters["invoice_num"]}%"))
                                 if "min_total" and "max_total" in filters:
                                         stmt.where(filters["min_total"] <= Invoice.total <= filters["max_total"])
+                                if "min_total" in filters and "max_total" not in filters:
+                                        stmt.where(filters["min_total"] <= Invoice.total)
+                                if "max_total" in filters and "min_total" not in filters:
+                                        stmt.where(Invoice.total <= filters["max_total"])
 
                                 return session.scalars(stmt).all()
                         except:

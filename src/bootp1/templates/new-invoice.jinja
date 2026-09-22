@@ -13,7 +13,7 @@
 <form id="ninvoice" method="post">
 	<fieldset>
 		<legend>Add Invoice</legend>
-	        <input list="customers" placeholder="Customer">
+	        <input id="customer" name="customer" list="customers" placeholder="Customer">
 	        <datalist id="customers">
 	        {% if customers %}
 	        {% for customer in customers %}
@@ -22,10 +22,11 @@
 	        {% endif %}
 	        </datalist><br>
 		<input type="text" id="inv_num" name="inv_num" placeholder="Invoice Number"><br>
-		<select id="terms" name="terms" placeholder="Payment Terms">
-                {% for term in terms %}
-                        <option value="{{ term }}"
-                {% endfor %}
+		<select id="terms" name="terms">
+			<option selected></option>
+			{% for term in terms %}
+                        <option>{{ term }}</option>
+			{% endfor %}
                 </select><br>
 		<input type="text" id="total" name="total" placeholder="Invoice Total"><br>
                 <button type="submit" id="ninvoice_submit">Submit</button>

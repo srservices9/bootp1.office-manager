@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List, Optional
 
-from sqlalchemy import DateTime, ForeignKey, func, null
+from sqlalchemy import DateTime, ForeignKey, String, func, null
 from sqlalchemy.orm import DeclarativeBase, relationship, Mapped, mapped_column
 
 class Base(DeclarativeBase):
@@ -20,6 +20,7 @@ class Invoice(Base):
         file_id:Mapped[Optional[int]] = mapped_column(ForeignKey("files.record_id"))
 
         # Relationships
+        customer:Mapped["Customer"] = relationship()
         file:Mapped[Optional["FileRecord"]] = relationship(back_populates="invoice")
 
         def __init__(self, attributes_dict) -> None:
@@ -69,7 +70,7 @@ class Customer(Base):
         # Attributes
         __tablename__ = "customers"
         record_id:Mapped[int] = mapped_column(primary_key=True)
-        name:Mapped[str]
+        name:Mapped[str] = mapped_column(String(collation="NOCASE"), unique=True)
         contact_first_name:Mapped[Optional[str]]
         contact_last_name:Mapped[Optional[str]]
         contact_phone:Mapped[Optional[str]]

@@ -16,7 +16,7 @@ class RecordService:
                                 return REPO.search_customers(filters)
                                         
                 except:
-                        traceback.print_exc()
+                        raise
 
         def new_record(self, type_value: str, record_attributes: dict) -> int | None:
                 try:
@@ -24,7 +24,7 @@ class RecordService:
                         record_id = REPO.add_record(record)
                         return record_id
                 except:
-                        traceback.print_exc()
+                        raise
 
         def upload_file(self, record_id: int, type_value: str, file_attributes: dict, file_stream) -> None:
                 try:
