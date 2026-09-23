@@ -73,38 +73,60 @@ class Repository:
         def search_customers(self, filters):
                 with Session(self.engine) as session:
                         try:
+                                result = None
                                 stmt = select(Customer)
+
                                 if filters == None:
-                                        return session.scalars(stmt).all()
-                                if "name" in filters and "match" in filters:
+                                        result = session.scalars(stmt).all()
+                                # "match" key provided determines if trying to find specific row.
+                                elif "name" in filters and "match" in filters:
                                         stmt.where(Customer.name == filters["name"])
-                                if "name" in filters and "match" not in filters:
-                                        stmt.where(Customer.name.ilike(f"%{filters["name"]}%"))
+                                        result = session.scalars(stmt).one_or_none()
+                                elif "name" not in filters and "match" in filters:
+                                        raise ValueError("Name not provided.")
+
+                                else:
+                                        if "name" in filters:
+                                                stmt.where(Customer.name.ilike(f"%{filters["name"]}%"))
+
+                                        result = session.scalars(stmt).all()
                         except:
                                 session.rollback()
                                 raise
                         else:
-                                return session.scalars(stmt).all()
+                                return result
 
-        def search_invoices(self, filters=None):
+        def search_invoices(self, filters):
                 with Session(self.engine) as session:
                         try:
+                                result = None
                                 stmt = select(Invoice)
+
                                 if filters == None:
-                                        return session.execute(stmt)
-                                if "customer_id" in filters:
-                                        stmt.where(Invoice.customer_id == filters["customer_id"])
-                                if "invoice_num" in filters:
-                                        stmt.where(Invoice.invoice_num.ilike(f"%{filters["invoice_num"]}%"))
-                                if "min_total" and "max_total" in filters:
-                                        stmt.where(filters["min_total"] <= Invoice.total <= filters["max_total"])
-                                if "min_total" in filters and "max_total" not in filters:
-                                        stmt.where(filters["min_total"] <= Invoice.total)
-                                if "max_total" in filters and "min_total" not in filters:
-                                        stmt.where(Invoice.total <= filters["max_total"])
+                                        result = session.execute(stmt).all()
+                                # "match" key provided determines if trying to find specific row.
+                                elif "invoice_num" in filters and "match" in filters:
+                                        stmt.where(Invoice.invoice_num == filters["invoice_num"])
+                                        result = session.execute(stmt).one_or_none()
+                                elif "invoice_num" not in filters and "match" in filters:
+                                        raise ValueError("Invoice number not provided")
+
+                                else:
+                                        if "customer_id" in filters:
+                                                stmt.where(Invoice.customer_id == filters["customer_id"])
+                                        if "invoice_num" in filters:
+                                                stmt.where(Invoice.invoice_num.ilike(f"%{filters["invoice_num"]}%"))
+                                        if "min_total" and "max_total" in filters:
+                                                stmt.where(filters["min_total"] <= Invoice.total <= filters["max_total"])
+                                        if "min_total" in filters and "max_total" not in filters:
+                                                stmt.where(filters["min_total"] <= Invoice.total)
+                                        if "max_total" in filters and "min_total" not in filters:
+                                                stmt.where(Invoice.total <= filters["max_total"])
+
+                                        result = session.scalars(stmt).all()
                         except:
                                 session.rollback()
                                 raise
                         else:
-                                return session.scalars(stmt).all()
+                                return result
 

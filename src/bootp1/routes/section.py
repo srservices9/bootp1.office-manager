@@ -30,21 +30,20 @@ def invoice():
                                 else:
                                         filters["customer_id"] = customer_obj_list[0].record_id
 
-                        elif request.form["inv_num"]:
+                        if request.form["inv_num"]:
                                 filters["invoice_num"] = request.form["inv_num"]
-                        elif request.form["min_total"]:
+                        if request.form["min_total"]:
                                 filters["min_total"] = request.form["min_total"]
-                        elif request.form["max_total"]:
+                        if request.form["max_total"]:
                                 filters["max_total"] = request.form["max_total"]
 
-                        if request.form["min_total"] and request.form["max_total"]:
-                                if request.form["min_total"] > request.form["max_total"]:
+                        if filters["min_total"] and filters["max_total"]:
+                                if filters["min_total"] > filters["max_total"]:
                                         error = "Minimum total cannot be more than maximum total"
 
                         if error is None:
                                 try:
                                         INVOICES = RECORDS.search_for_records("INVOICE", filters)
-                                        print(INVOICES)
                                 except:
                                         error = "Failed to find invoices"
                                 else:
