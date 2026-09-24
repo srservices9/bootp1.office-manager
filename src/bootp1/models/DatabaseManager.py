@@ -103,11 +103,11 @@ class Repository:
                                 stmt = select(Invoice)
 
                                 if filters == None:
-                                        result = session.execute(stmt).all()
+                                        result = session.scalars(stmt).all()
                                 # "match" key provided determines if trying to find specific row.
                                 elif "invoice_num" in filters and "match" in filters:
                                         stmt.where(Invoice.invoice_num == filters["invoice_num"])
-                                        result = session.execute(stmt).one_or_none()
+                                        result = session.scalars(stmt).one_or_none()
                                 elif "invoice_num" not in filters and "match" in filters:
                                         raise ValueError("Invoice number not provided")
 
@@ -117,10 +117,12 @@ class Repository:
                                         if "invoice_num" in filters:
                                                 stmt.where(Invoice.invoice_num.ilike(f"%{filters["invoice_num"]}%"))
                                         if "min_total" and "max_total" in filters:
+                                                if filters["min_total"] > filters["max_total"]:
+                                                        raise ValueError("Minimum total cannot be higher than maximum total")
                                                 stmt.where(filters["min_total"] <= Invoice.total <= filters["max_total"])
-                                        if "min_total" in filters and "max_total" not in filters:
+                                        elif "min_total" in filters:
                                                 stmt.where(filters["min_total"] <= Invoice.total)
-                                        if "max_total" in filters and "min_total" not in filters:
+                                        elif "max_total" in filters:
                                                 stmt.where(Invoice.total <= filters["max_total"])
 
                                         result = session.scalars(stmt).all()
@@ -130,3 +132,37 @@ class Repository:
                         else:
                                 return result
 
+        def search_items(self, filters):
+                with Session(self.engine) as session:
+                        try:
+                                result = None
+                                stmt = select(Item)
+
+                                if filters == None:
+                                        result = session.scalars(stmt).all()
+                                elif "name" in filters and "match" in filters:
+                                        stmt.where(Item.name == filters["name"])
+                                        result = session.scalars(stmt).one_or_none()
+                                elif "name" not in filters and "match" in filters:
+                                        raise ValueError("Item name not provided")
+
+                                else:
+                                        if "name" in filters:
+                                                stmt.where(Item.name.ilike(f"%{filters["name"]}%"))
+                                        if "description" in filters:
+                                                stmt.where(Item.default_description.ilike(f"%{filters["description"]}%"))
+                                        if "min_rate" and "max_rate" in filters:
+                                                if filters["min_rate"] > filters["max_rate"]:
+                                                        raise ValueError("Minimum rate cannot be higher than maximum rate")
+                                                stmt.where(filters["min_rate"] <= Item.default_rate <= filters["max_rate"])
+                                        elif "min_rate" in filters:
+                                                stmt.where(filters["min_rate"] <= Item.default_rate)
+                                        elif "max_rate" in filters:
+                                                stmt.where(Item.default_rate <= filters["max_rate"])
+
+                                        result = session.scalars(stmt).all()
+                        except:
+                                session.rollback()
+                                raise
+                        else:
+                                return result

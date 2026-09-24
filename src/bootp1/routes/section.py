@@ -11,6 +11,10 @@ def get_customer_list():
         CUSTOMERS = RECORDS.search_for_records("CUSTOMER")
         return CUSTOMERS
 
+def get_item_list():
+        ITEMS = RECORDS.search_for_records("ITEM")
+        return ITEMS
+
 #------------------------------Invoices-----------------------------
 @section.route("/invoices", methods=("GET", "POST"))
 @section.route("")
@@ -56,6 +60,7 @@ def invoice():
 @section.route("/invoices/new-invoice", methods=("GET", "POST"))
 def new_invoice():
         CUSTOMERS = get_customer_list()
+        ITEMS = get_item_list()
         TERMS = ["net 30", "net 15", "net 0"]
 
         if request.method == "POST":

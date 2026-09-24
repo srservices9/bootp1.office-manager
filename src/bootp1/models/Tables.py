@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List, Optional
 
 from sqlalchemy import DateTime, ForeignKey, String, func, null
-from sqlalchemy.orm import DeclarativeBase, relationship, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, Relationship, relationship, Mapped, mapped_column
 
 class Base(DeclarativeBase):
         pass
@@ -76,10 +76,9 @@ class Customer(Base):
         contact_phone:Mapped[Optional[str]]
 
         def __init__(self, attributes_dict) -> None:
+                self.name = attributes_dict["name"]
                 if "record_id" in attributes_dict: 
                         self.record_id = attributes_dict["record_id"]
-                if "name" in attributes_dict: 
-                        self.name = attributes_dict["name"]
                 if "contact_first_name" in attributes_dict: 
                         self.contact_first_name = attributes_dict["contact_first_name"]
                 if "contact_last_name" in attributes_dict: 
@@ -93,12 +92,14 @@ class Item(Base):
         __tablename__ = "items"
         # Attributes
         record_id:Mapped[int] = mapped_column(primary_key=True)
-        name:Mapped[str]
-        description:Mapped[str]
-        cost:Mapped[float]
+        name:Mapped[str] = mapped_column(String(collation="NOCASE"), unique=True)
+        default_description:Mapped[str]
+        default_rate:Mapped[float]
+
+        # Relationships
+        item_entry:Mapped[Optional["ItemEntry"]] = Relationship(back_populates="item")
 
         def __init__(self, attributes_dict) -> None:
-                self.record_id = attributes_dict["record_id"]
                 self.name = attributes_dict["name"]
                 self.description = attributes_dict["description"]
                 self.cost = attributes_dict["cost"]
@@ -113,9 +114,25 @@ class ItemEntry(Base):
         amount:Mapped[float]
 
         # Foreign Keys
-        invoice_id:Mapped[int] = mapped_column(ForeignKey("invoices.record_id"), nullable=True)
-        estimate_id:Mapped[int] = mapped_column(ForeignKey("estimates.record_id"), nullable=True)
+        invoice_id:Mapped[Optional[int]] = mapped_column(ForeignKey("invoices.record_id"))
+        estimate_id:Mapped[Optional[int]] = mapped_column(ForeignKey("estimates.record_id"))
         item_id:Mapped[int] = mapped_column(ForeignKey("items.record_id"))
+
+        # Relationships
+        invoice:Mapped[Optional["Invoice"]] = Relationship()
+        estimate:Mapped[Optional["Estimate"]] = Relationship()
+        item:Mapped[List["Item"]] = Relationship(lazy="selectin")
+
+        def __init__(self, attributes_dict) -> None:
+                self.item_id = attributes_dict["item_id"]
+                self.description = attributes_dict["description"]
+                self.quantity = attributes_dict["quantity"]
+                self.rate = attributes_dict["rate"]
+                self.amount = self.quantity * self.rate
+                if "invoice_id" in attributes_dict:
+                        self.invoice_id = attributes_dict["invoice_id"]
+                if "estimate_id" in attributes_dict:
+                        self.estimate_id = attributes_dict["estimate_id"]
         
 # -----------------------End of items-----------------------------------
 # -----------------------Start of Files---------------------------------

@@ -14,15 +14,22 @@ class RecordService:
                                 return REPO.search_invoices(filters)
                         if record_type is Customer:
                                 return REPO.search_customers(filters)
-                                        
+                        if record_type is Item:
+                                return REPO.search_items(filters)
                 except:
-                        traceback.print_exc()
+                        raise
 
-        def new_record(self, type_value: str, record_attributes: dict) -> int | None:
+        def new_record(self, type_value: str, record_attributes: dict) -> None:
                 try:
                         record = self.get_record_type(type_value)(record_attributes)
-                        record_id = REPO.add_record(record)
-                        return record_id
+                        if record is Invoice:
+                                invoice_id = REPO.add_record(record)
+                                for item in record_attributes["items"]:
+                                        item["invoice_id"] = invoice_id
+                                        item_entry = ItemEntry(item)
+                                        REPO.add_record(item_entry)
+                        else:
+                                REPO.add_record(record)
                 except:
                         raise
 
@@ -55,6 +62,8 @@ class RecordService:
 
         def get_record_type(self, type_value: str):
                 match type_value:
+                        case "CUSTOMER":
+                                return Customer
                         case "INVOICE":
                                 return Invoice
                         case "ESTIMATE":
@@ -67,8 +76,6 @@ class RecordService:
                                 return Item
                         case "FILE":
                                 return FileRecord
-                        case "CUSTOMER":
-                                return Customer
                         case _:
                                 raise ValueError("Invalid Record Type")
 
