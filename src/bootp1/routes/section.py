@@ -27,12 +27,12 @@ def invoice():
                 no_filters = all(value is None for value in request.form.values())
                 if not no_filters:
                         if request.form["customer"]:
-                                customer_obj_list = RECORDS.search_for_records("CUSTOMER", {"name": request.form["customer"], "match": None})
+                                customer_obj = RECORDS.search_for_records("CUSTOMER", {"name": request.form["customer"], "match": None})
                                 # search_for_records method will always return a list of ORM Objects or None.
-                                if not customer_obj_list:
+                                if not customer_obj:
                                         error = "Customer not found"
                                 else:
-                                        filters["customer_id"] = customer_obj_list[0].record_id
+                                        filters["customer_id"] = customer_obj.record_id
 
                         if request.form["inv_num"]:
                                 filters["invoice_num"] = request.form["inv_num"]
@@ -40,10 +40,6 @@ def invoice():
                                 filters["min_total"] = request.form["min_total"]
                         if request.form["max_total"]:
                                 filters["max_total"] = request.form["max_total"]
-
-                        if filters["min_total"] and filters["max_total"]:
-                                if filters["min_total"] > filters["max_total"]:
-                                        error = "Minimum total cannot be more than maximum total"
 
                         if error is None:
                                 try:
@@ -70,7 +66,6 @@ def new_invoice():
                 invoice_attributes["terms"] = request.form["terms"]
                 invoice_attributes["total"] = request.form["total"]
                 customer_name = request.form["customer"]
-                print(customer_name)
                 if not invoice_attributes["invoice_num"]:
                         error = "Invoice Number is required"
                 elif not invoice_attributes["terms"] or invoice_attributes["terms"] not in TERMS:
@@ -80,12 +75,12 @@ def new_invoice():
                 elif not customer_name:
                         error = "Customer is required"
                 else: 
-                        customer_obj_list = RECORDS.search_for_records("CUSTOMER", {"name": customer_name, "match": None})
+                        customer_obj = RECORDS.search_for_records("CUSTOMER", {"name": customer_name, "match": None})
                         # search_for_records method will always return a list of ORM Objects or None.
-                        if not customer_obj_list:
+                        if not customer_obj:
                                 error = "Customer not found"
                         else:
-                                invoice_attributes["customer_id"] = customer_obj_list[0].record_id
+                                invoice_attributes["customer_id"] = customer_obj.record_id
 
                 if error is None:
                         try:

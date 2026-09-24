@@ -31,7 +31,7 @@ class RecordService:
                         else:
                                 REPO.add_record(record)
                 except:
-                        raise
+                        traceback.print_exc()
 
         def upload_file(self, record_id: int, type_value: str, file_attributes: dict, file_stream) -> None:
                 try:

@@ -28,7 +28,7 @@
                         <option>{{ term }}</option>
 			{% endfor %}
                 </select><br>
-		<input type="text" id="total" name="total" placeholder="Invoice Total"><br>
+		<input type="number" id="total" name="total" step=".01" min="0" placeholder="Invoice Total"><br>
                 <button type="submit" id="ninvoice_submit">Submit</button>
 	</fieldset>
 </form>
