@@ -1,0 +1,53 @@
+{% extends "items.jinja" %}
+
+{% block style %}
+<style>
+	#item_search {
+		margin-top: 50px;
+		padding-left: 40px;
+                justify-content: left;
+                align-items: center;
+                list-style-type: none;
+		display: flex;
+	}
+
+	#items_table {
+		padding-left:80px;
+		justify-content:left;
+		align-items: center;
+		display: flex;
+	}
+</style>
+{% endblock %}
+
+{% block page %}
+<form id="item_search" method="POST">
+	<fieldset>
+		<legend>Search for items</legend>
+		<label for="item_name">Search by item name</label>
+		<input type="text" id="item_name" name="item_name" placeholder="Item Name">
+		<label for="min_rate">Minimum value</label>
+		<input type="number" id="min_rate" name="min_rate" min="0" step=".01">
+		<label for="max_rate">Maximum value</label>
+		<input type="number" id="max_rate" name="max_rate" min="0" step=".01">
+		<button type="submit" id="item_search_submit">Submit</button>
+	</fieldset>
+</form><br>
+
+<table id="items_table">
+	<tr>
+		<th>Item Name</th>
+		<th>Description</th>
+		<th>Rate</th>
+	</tr>
+	{% if items %}
+	{% for item in items %}
+	<tr>
+		<td>{{ item.name }}</td>
+		<td>{{ item.description }}</td>
+		<td>{{ item.rate }}</td>
+	</tr>
+	{% endfor %}
+	{% endif %}
+</table>
+{% endblock %}

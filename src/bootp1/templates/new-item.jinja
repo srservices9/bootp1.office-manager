@@ -1,0 +1,22 @@
+{% extends "items.jinja" %}
+{% block style %}
+<style>
+        #nitem {
+                margin-top: 75px;
+                justify-content: center;
+                align-items: center;
+                display: flex;
+        }
+</style>
+{% endblock %}
+{% block page %}
+<form id="nitem" method="post">
+	<fieldset>
+		<legend>Add Item</legend>
+	        <input type="text" id="iname" name="iname" placeholder="Item Name"><br>
+		<input type="text" id="description" name="description" placeholder="Description"><br>
+		<input type="number" id="rate" name="rate" step=".01" min="0" placeholder="Rate"><br>
+                <button type="submit" id="nitem_submit">Submit</button>
+	</fieldset>
+</form>
+{% endblock %}

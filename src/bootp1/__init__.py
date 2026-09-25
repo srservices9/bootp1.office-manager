@@ -1,6 +1,6 @@
 from flask import Flask
 from bootp1.config import Config
-from bootp1.routes import home, section
+from bootp1.routes import home, invoices, customers, items
 from sqlalchemy import create_engine
 
 def create_app():
@@ -8,7 +8,9 @@ def create_app():
     app.config.from_object(Config)
 
     app.register_blueprint(home.home, url_prefix="")
-    app.register_blueprint(section.section, url_prefix="/sections")
+    app.register_blueprint(invoices.invoices, url_prefix="/invoices")
+    app.register_blueprint(customers.customers, url_prefix="/customers")
+    app.register_blueprint(items.items, url_prefix="/items")
 
     return app
 

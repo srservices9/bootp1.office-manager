@@ -1,25 +1,17 @@
 from flask import Blueprint, flash, redirect, request, render_template
+from flask_wtf import FlaskForm
+from wtforms import StringField, IntegerField, FloatField, DateTimeLocalField
+from wtforms import validators
 from bootp1.models.RecordManager import RecordService
-from bootp1.models.DatabaseManager import Repository
-from sqlalchemy.exc import IntegrityError
 
 RECORDS = RecordService()
 
-section = Blueprint("section", __name__, template_folder="templates")
-
-def get_customer_list():
-        CUSTOMERS = RECORDS.search_for_records("CUSTOMER")
-        return CUSTOMERS
-
-def get_item_list():
-        ITEMS = RECORDS.search_for_records("ITEM")
-        return ITEMS
+invoices = Blueprint("invoices", __name__, template_folder="templates")
 
 #------------------------------Invoices-----------------------------
-@section.route("/invoices", methods=("GET", "POST"))
-@section.route("")
+@invoices.route("/", methods=("GET", "POST"))
 def invoice():
-        CUSTOMERS = get_customer_list()
+        CUSTOMERS = RECORDS.search_for_records("CUSTOMER")
 
         if request.method == "POST":
                 filters = {}
@@ -47,20 +39,21 @@ def invoice():
                                 except:
                                         error = "Failed to find invoices"
                                 else:
-                                        return render_template("invoice-search.jinja", customers=CUSTOMERS, invoices=INVOICES)
+                                        return render_template("search-invoices.jinja", customers=CUSTOMERS, invoices=INVOICES)
 
                         flash(error)
                 
-        return render_template("invoice-search.jinja", customers=CUSTOMERS)
+        return render_template("search-invoices.jinja", customers=CUSTOMERS)
 
-@section.route("/invoices/new-invoice", methods=("GET", "POST"))
+@invoices.route("/new-invoice", methods=("GET", "POST"))
 def new_invoice():
-        CUSTOMERS = get_customer_list()
-        ITEMS = get_item_list()
+        CUSTOMERS = RECORDS.search_for_records("CUSTOMER")
+        ITEMS = RECORDS.search_for_records("ITEM")
         TERMS = ["net 30", "net 15", "net 0"]
 
         if request.method == "POST":
                 invoice_attributes = {}
+                items = {}
                 error = None 
                 invoice_attributes["invoice_num"] = request.form["inv_num"]
                 invoice_attributes["terms"] = request.form["terms"]
@@ -88,46 +81,8 @@ def new_invoice():
                         except:
                                 error = "Failed to add invoice"
                         else:
-                                return redirect("/sections/invoices")
+                                return redirect("/invoices")
 
                 flash(error)
                 
-        return render_template("new-invoice.jinja", customers=CUSTOMERS, terms=TERMS)
-#------------------------------Customers-----------------------------
-
-@section.route("/customers")
-def customer():
-        CUSTOMERS = get_customer_list()
-        return render_template("customer-search.jinja", customers=CUSTOMERS)
-
-@section.route("/customers/new-customer", methods=("GET", "POST"))
-def new_customer():
-        if request.method == "POST":
-                customer_attributes = {}
-                error = None 
-                customer_attributes["name"] = request.form["cname"]
-                if not customer_attributes["name"]:
-                        error = "Customer name is required"
-                elif request.form["ct_fname"]:
-                        customer_attributes["contact_first_name"] = request.form["ct_fname"]
-                elif request.form["ct_lname"]:
-                        customer_attributes["contact_last_name"] = request.form["ct_lname"]
-                elif request.form["ct_phone"]:
-                        customer_attributes["contact_phone"] = request.form["ct_phone"]
-
-                if error is None:
-                        try:
-                                print(customer_attributes)
-                                RECORDS.new_record("CUSTOMER", customer_attributes)
-                        except IntegrityError:
-                                error = f"Failed to add customer. {request.form["cname"]} already exists."
-                        except Exception as exc:
-                                error = f"Failed to add customer. {exc}"
-                        else:
-                                return redirect("/sections/customers")
-
-                flash(error)
-                
-        return render_template("new-customer.jinja")
-
-#------------------------------Customers-----------------------------
+        return render_template("new-invoice.jinja", customers=CUSTOMERS, terms=TERMS, items=ITEMS)
