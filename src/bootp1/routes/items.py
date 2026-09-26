@@ -1,10 +1,10 @@
 from flask import Blueprint, flash, redirect, request, render_template
-from bootp1.models.RecordManager import RecordService
+from ..models.RecordManager import RecordService
 from sqlalchemy.exc import IntegrityError
 
 RECORDS = RecordService()
 
-items = Blueprint("items", __name__, template_folder="templates")
+items = Blueprint("items", "item", template_folder="templates")
 
 #------------------------------Items-----------------------------
 

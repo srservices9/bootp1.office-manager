@@ -1,12 +1,11 @@
 from flask import Blueprint, flash, redirect, request, render_template
-from bootp1.models.RecordManager import RecordService
-from bootp1.models.DatabaseManager import Repository
+from ..models.RecordManager import RecordService
 from sqlalchemy.exc import IntegrityError
 
+
+customers = Blueprint("customers", "customer", template_folder="templates")
+
 RECORDS = RecordService()
-
-customers = Blueprint("customers", __name__, template_folder="templates")
-
 #------------------------------Customers-----------------------------
 
 @customers.route("/")

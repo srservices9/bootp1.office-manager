@@ -22,24 +22,22 @@
 
 {% block page %}
 <form id="inv-search" method="POST">
+        {{ form.hidden_tag() }}
 	<fieldset>
 		<legend>Search for invoices</legend>
-		<label for="customers">Search by customer:</label><br>
-		<input id="customer" name ="customer" list="customers" {% if not customers %}placeholder="No customers"{% endif %}>
-		<datalist id="customers">
-		{% if customers %}
-		{% for customer in customers %}
-			<option value="{{ customer.name }}">
-		{% endfor %}
-		{% endif %}
-		</datalist>
-		<label for="inv_num">Search by invoice number</label>
-		<input type="text" id="inv_num" name="inv_num" placeholder="Invoice Number">
-		<label for="min_total">Minimum value</label>
-		<input type="number" id="min_total" name="min_total" min="0" step=".01">
-		<label for="max_total">Maximum value</label>
-		<input type="number" id="max_total" name="max_total" min="0" step=".01">
-		<button type="submit" id="inv-search-submit">Submit</button>
+                {{ form.customer.label }}
+                {{ form.customer() }}
+
+                {{ form.invoice_num.label }}
+                {{ form.invoice_num() }}
+
+                {{ form.min_total.label }}
+                {{ form.min_total() }}
+
+                {{ form.max_total.label }}
+                {{ form.max_total() }}
+
+                {{ form.submit() }}
 	</fieldset>
 </form><br>
 

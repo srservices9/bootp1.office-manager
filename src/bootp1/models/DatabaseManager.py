@@ -1,13 +1,13 @@
-from sqlalchemy import Update, select
+from sqlalchemy import Update, create_engine, select
 from sqlalchemy.exc import MultipleResultsFound
 from sqlalchemy.orm import Session
 
-from bootp1.__init__ import create_engine_link
-from bootp1.models.Tables import *
+from .Tables import *
+from ..config import Config
 
 class Repository:
         def __init__(self):
-                self.engine = create_engine_link()
+                self.engine = create_engine(Config.DATABASE_URL, echo=True)
                 # Base.metadata.drop_all(self.engine)
                 Base.metadata.create_all(self.engine)
 

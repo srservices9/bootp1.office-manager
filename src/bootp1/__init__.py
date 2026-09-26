@@ -1,7 +1,6 @@
 from flask import Flask
-from bootp1.config import Config
-from bootp1.routes import home, invoices, customers, items
-from sqlalchemy import create_engine
+from .config import Config
+from .routes import home, invoices, customers, items
 
 def create_app():
     app = Flask(__name__)
@@ -14,8 +13,4 @@ def create_app():
 
     return app
 
-def create_engine_link():
-    engine = create_engine(Config.DATABASE_URL, echo=True)
-
-    return engine
 

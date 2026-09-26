@@ -1,4 +1,4 @@
-from flask import render_template, request, Blueprint
+from flask import render_template, Blueprint
 
 home = Blueprint("home", __name__, template_folder="templates")
 
