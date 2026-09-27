@@ -2,7 +2,7 @@
 
 {% block style %}
 <style>
-	#customer-search {
+	#cust-search {
 		margin-top: 50px;
 		padding-left: 40px;
                 justify-content: left;
@@ -10,19 +10,51 @@
                 list-style-type: none;
 		display: flex;
 	}
+
+	#cust-table {
+		padding-left:80px;
+		justify-content:left;
+		align-items: center;
+		display: flex;
+	}
 </style>
 {% endblock %}
 
 {% block page %}
-<form id="customer-search">
-	<label for="customers">Search by customer:</label><br>
-	<input list="customers" {% if not customers %}placeholder="No customers"{% endif %}>
-	<datalist id="customers">
-	{% if customers %}
-	{% for customer in customers %}
-		<option value="{{ customer.name }}">
+<form id="cust-search" method="POST">
+        {{ form.hidden_tag() }}
+        <fieldset>
+                <legend>Search for customers</legend>
+                {{ form.name.label }}
+                {{ form.name() }}
+
+                {{ form.contact_first_name.label }}
+                {{ form.contact_first_name() }}
+
+                {{ form.contact_last_name.label }}
+                {{ form.contact_last_name() }}
+
+                {{ form.contact_phone.label }}
+                {{ form.contact_phone() }}
+
+                {{ form.submit() }}
+        </fieldset>
+</form><br>
+
+<table id="cust-table">
+	<tr>
+		<th>Name</th>
+		<th>Contact Name</th>
+		<th>Contact Phone</th>
+	</tr>
+	{% if results %}
+	{% for result in results %}
+	<tr>
+		<td>{{ result.name }}</td>
+		<td>{{ result.contact_first_name ~ " " ~ result.contact_last_name }}</td>
+		<td>{{ result.contact_phone }}</td>
+	</tr>
 	{% endfor %}
 	{% endif %}
-	</datalist>
-</form>
+</table>
 {% endblock %}

@@ -48,13 +48,13 @@
 		<th>Terms</th>
 		<th>Total</th>
 	</tr>
-	{% if invoices %}
-	{% for invoice in invoices %}
+	{% if results %}
+	{% for result in results %}
 	<tr>
-		<td>{{ invoice.invoice_num }}</td>
-		<td>{{ invoice.customer.name }}</td>
-		<td>{{ invoice.terms }}</td>
-		<td>{{ invoice.total }}</td>
+		<td>{{ result.invoice_num }}</td>
+		<td>{{ result.customer.name }}</td>
+		<td>{{ result.terms }}</td>
+		<td>{{ result.total }}</td>
 	</tr>
 	{% endfor %}
 	{% endif %}

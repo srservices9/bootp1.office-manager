@@ -1,6 +1,6 @@
 from flask import Blueprint, flash, redirect, request, render_template
 from ..models.RecordManager import RecordService
-from ..forms.InvoiceForms import InvoiceSearch
+from ..forms.InvoiceForms import Invoices
 
 RECORDS = RecordService()
 
@@ -10,7 +10,7 @@ invoices = Blueprint("invoices", "invoice", template_folder="templates")
 @invoices.route("/", methods=("GET", "POST"))
 def invoice():
         CUSTOMERS = RECORDS.search_for_records("CUSTOMER")
-        FORM = InvoiceSearch()
+        FORM = Invoices()
         if CUSTOMERS:
                 data = [customer.name for customer in CUSTOMERS]
                 FORM.customer.datalist = data
@@ -37,13 +37,19 @@ def invoice():
                         if FORM.max_total.data:
                                 filters["max_total"] = FORM.max_total.data
 
+                        # Flushing form values to prevent previously submitted data from affecting new submits.
+                        FORM.customer.data = None
+                        FORM.invoice_num.data = None
+                        FORM.min_total.data = None
+                        FORM.max_total.data = None
+
                         if error is None:
                                 try:
-                                        INVOICES = RECORDS.search_for_records("INVOICE", filters)
+                                        RESULTS = RECORDS.search_for_records("INVOICE", filters)
                                 except:
                                         error = "Failed to find invoices"
                                 else:
-                                        return render_template("search-invoices.jinja", form=FORM, invoices=INVOICES)
+                                        return render_template("search-invoices.jinja", form=FORM, results=RESULTS)
 
                         flash(error)
                 

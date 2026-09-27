@@ -3,23 +3,34 @@
 {% block style %}
 <style>
         #ncustomer {
-                margin-top: 75px;
-                justify-content: center;
+		margin-top: 50px;
+		padding-left: 40px;
+                justify-content: left;
                 align-items: center;
-                display: flex;
+                list-style-type: none;
+		display: flex;
         }
-</style>
+</style> 
 {% endblock %}
 
 {% block page %}
 <form id="ncustomer" method="post">
+        {{ form.hidden_tag() }}
 	<fieldset>
 		<legend>Add Customer</legend>
-		<input type="text" id="cname" name="cname" placeholder="Customer Name"><br>
-		<input type="text" id="ct_fname" name="ct_fname" placeholder="Contact First Name"><br>
-		<input type="text" id="ct_lname" name="ct_lname" placeholder="Contact Last Name"><br>
-		<input type="text" id="ct_phone" name="ct_phone" placeholder="Contact Phone Number"><br>
-                <button type="submit" id="ncustomer_submit">Submit</button>
+                {{ form.name.label }}
+                {{ form.name() }}
+
+                {{ form.contact_first_name.label }}
+                {{ form.contact_first_name() }}
+
+                {{ form.contact_last_name.label }}
+                {{ form.contact_last_name() }}
+
+                {{ form.contact_phone.label }}
+                {{ form.contact_phone() }}
+
+                {{ form.submit() }}
 	</fieldset>
 </form>
 {% endblock %}
