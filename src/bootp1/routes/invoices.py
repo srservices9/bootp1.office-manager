@@ -11,11 +11,14 @@ invoices = Blueprint("invoices", "invoice", template_folder="templates")
 def invoice():
         CUSTOMERS = RECORDS.search_for_records("CUSTOMER")
         FORM = Invoices()
+        customer_ids = {}
+        customer_names = []
         if CUSTOMERS:
-                data = [customer.name for customer in CUSTOMERS]
-                FORM.customer.datalist = data
-        else:
-                FORM.customer.datalist = []
+                for customer in CUSTOMERS:
+                        customer_ids[customer.name] = customer.record_id
+                        customer_names.append(customer.name)
+
+        FORM.customer.datalist = customer_names
 
         if request.method == "POST":
                 filters = None
@@ -24,12 +27,10 @@ def invoice():
                 if not no_filters:
                         filters = {}
                         if FORM.customer.data:
-                                customer_obj = RECORDS.search_for_records("CUSTOMER", {"name": FORM.customer.data, "match": None})
-                                # search_for_records method will always return a list of ORM Objects or None.
-                                if not customer_obj:
+                                if FORM.customer.data not in customer_ids:
                                         error = "Customer not found"
                                 else:
-                                        filters["customer_id"] = customer_obj.record_id
+                                        filters["customer_id"] = customer_ids[FORM.customer.data]
 
                         if FORM.invoice_num.data:
                                 filters["invoice_num"] = FORM.invoice_num.data
