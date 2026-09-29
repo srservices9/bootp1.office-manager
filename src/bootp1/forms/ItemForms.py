@@ -4,6 +4,12 @@ from wtforms.validators import DataRequired, NumberRange
 
 from .fields import DatalistField
 
+# Item class used as fieldlist for invoices and estimates
+class Item(FlaskForm):
+        name = DatalistField("Name", validators=[DataRequired()])
+        description = StringField("Description", validators=[DataRequired()])
+        rate = FloatField("Rate", validators=[DataRequired()])
+
 class Items(FlaskForm):
         name = DatalistField("Item Name")
         description = StringField("Description")

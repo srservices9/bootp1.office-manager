@@ -1,6 +1,6 @@
 from flask import Blueprint, flash, redirect, request, render_template
 from ..models.RecordManager import RecordService
-from ..forms.InvoiceForms import Invoices
+from ..forms.InvoiceForms import Invoices, NewInvoice
 
 RECORDS = RecordService()
 
@@ -63,19 +63,21 @@ def new_invoice():
         ITEMS = RECORDS.search_for_records("ITEM")
         TERMS = ["net 30", "net 15", "net 0"]
 
+        FORM = NewInvoice()
+
         if request.method == "POST":
-                invoice_attributes = {}
+                attributes = {}
                 items = {}
                 error = None 
-                invoice_attributes["invoice_num"] = request.form["inv_num"]
-                invoice_attributes["terms"] = request.form["terms"]
-                invoice_attributes["total"] = request.form["total"]
+                attributes["invoice_num"] = request.form["inv_num"]
+                attributes["terms"] = request.form["terms"]
+                attributes["total"] = request.form["total"]
                 customer_name = request.form["customer"]
-                if not invoice_attributes["invoice_num"]:
+                if not attributes["invoice_num"]:
                         error = "Invoice Number is required"
-                elif not invoice_attributes["terms"] or invoice_attributes["terms"] not in TERMS:
+                elif not attributes["terms"] or attributes["terms"] not in TERMS:
                         error = "Terms are missing or not valid"
-                elif not invoice_attributes["total"]:
+                elif not attributes["total"]:
                         error = "Total amount is required"
                 elif not customer_name:
                         error = "Customer is required"
@@ -85,11 +87,11 @@ def new_invoice():
                         if not customer_obj:
                                 error = "Customer not found"
                         else:
-                                invoice_attributes["customer_id"] = customer_obj.record_id
+                                attributes["customer_id"] = customer_obj.record_id
 
                 if error is None:
                         try:
-                                RECORDS.new_record("INVOICE", invoice_attributes)
+                                RECORDS.new_record("INVOICE", attributes)
                         except:
                                 error = "Failed to add invoice"
                         else:
