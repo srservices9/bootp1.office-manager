@@ -11,12 +11,19 @@
 {% endblock %}
 {% block page %}
 <form id="nitem" method="post">
+        {{ form.hidden_tag() }}
 	<fieldset>
 		<legend>Add Item</legend>
-	        <input type="text" id="iname" name="iname" placeholder="Item Name"><br>
-		<input type="text" id="description" name="description" placeholder="Description"><br>
-		<input type="number" id="rate" name="rate" step=".01" min="0" placeholder="Rate"><br>
-                <button type="submit" id="nitem_submit">Submit</button>
+                {{ form.name.label }}
+                {{ form.name() }}
+
+                {{ form.default_description.label }}
+                {{ form.default_description() }}
+
+                {{ form.default_rate.label }}
+                {{ form.default_rate() }}
+
+                {{ form.submit()}}
 	</fieldset>
 </form>
 {% endblock %}

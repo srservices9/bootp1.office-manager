@@ -18,10 +18,11 @@ def invoice():
                 FORM.customer.datalist = []
 
         if request.method == "POST":
-                filters = {}
+                filters = None
                 error = None
                 no_filters = all(value is None for value in FORM.data)
                 if not no_filters:
+                        filters = {}
                         if FORM.customer.data:
                                 customer_obj = RECORDS.search_for_records("CUSTOMER", {"name": FORM.customer.data, "match": None})
                                 # search_for_records method will always return a list of ORM Objects or None.
@@ -43,15 +44,15 @@ def invoice():
                         FORM.min_total.data = None
                         FORM.max_total.data = None
 
-                        if error is None:
-                                try:
-                                        RESULTS = RECORDS.search_for_records("INVOICE", filters)
-                                except:
-                                        error = "Failed to find invoices"
-                                else:
-                                        return render_template("search-invoices.jinja", form=FORM, results=RESULTS)
+                if error is None:
+                        try:
+                                RESULTS = RECORDS.search_for_records("INVOICE", filters)
+                        except:
+                                error = "Failed to find invoices"
+                        else:
+                                return render_template("search-invoices.jinja", form=FORM, results=RESULTS)
 
-                        flash(error)
+                flash(error)
                 
         return render_template("search-invoices.jinja", form=FORM)
 

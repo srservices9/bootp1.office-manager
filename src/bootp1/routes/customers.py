@@ -39,15 +39,15 @@ def customer():
                         FORM.contact_last_name.data = None
                         FORM.contact_phone.data = None
 
-                        if not error:
-                                try:
-                                        RESULTS = RECORDS.search_for_records("CUSTOMER", filters)
-                                except Exception as exc:
-                                        error = f"Failed to search for customers: {exc}"
-                                else:
-                                        return render_template("search-customers.jinja", form=FORM, results=RESULTS)
+                if not error:
+                        try:
+                                RESULTS = RECORDS.search_for_records("CUSTOMER", filters)
+                        except Exception as exc:
+                                error = f"Failed to search for customers: {exc}"
+                        else:
+                                return render_template("search-customers.jinja", form=FORM, results=RESULTS)
 
-                        flash(error)
+                flash(error)
 
         return render_template("search-customers.jinja", form=FORM)
 
@@ -79,7 +79,7 @@ def new_customer():
                         try:
                                 RECORDS.new_record("CUSTOMER", attributes)
                         except IntegrityError:
-                                error = f"Failed to add customer. {request.form["cname"]} already exists."
+                                error = f"Failed to add customer. {attributes["name"]} already exists."
                         except Exception as exc:
                                 error = f"Failed to add customer. {exc}"
                         else:

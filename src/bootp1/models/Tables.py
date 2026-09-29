@@ -101,8 +101,8 @@ class Item(Base):
 
         def __init__(self, attributes_dict) -> None:
                 self.name = attributes_dict["name"]
-                self.description = attributes_dict["description"]
-                self.cost = attributes_dict["cost"]
+                self.default_description = attributes_dict["default_description"]
+                self.default_rate = attributes_dict["default_rate"]
 
 class ItemEntry(Base):
         __tablename__ = "item_entries"

@@ -11,8 +11,8 @@ class Invoices(FlaskForm):
         max_total = FloatField("Maximum Total", validators=[NumberRange(min=0.0)])
         submit = SubmitField("Submit")
 
-class NewInvoice(Invoices):
+class NewInvoice(FlaskForm):
         customer = DatalistField("Customer", validators=[DataRequired()])
         invoice_num = StringField("Invoice Number", validators=[DataRequired()])
-        min_total = FloatField("Minimum Total", validators=[NumberRange(min=0.0), DataRequired()])
-        max_total = FloatField("Maximum Total", validators=[NumberRange(min=0.0), DataRequired()])
+        total = FloatField("Total", validators=[DataRequired(), NumberRange(min=0.0)])
+        submit = SubmitField("Submit")
