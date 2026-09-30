@@ -12,7 +12,7 @@ class Invoice(Base):
         # Attributes
         record_id:Mapped[int] = mapped_column(primary_key=True)
         invoice_num:Mapped[str]
-        terms:Mapped[str]
+        terms:Mapped[int]
         total:Mapped[float]
 
         # Foreign Keys

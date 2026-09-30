@@ -1,14 +1,14 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, FloatField, SubmitField
+from wtforms import Form, StringField, FloatField, SubmitField
 from wtforms.validators import DataRequired, NumberRange
 
 from .fields import DatalistField
 
 # Item class used as fieldlist for invoices and estimates
-class Item(FlaskForm):
+class Item(Form):
         name = DatalistField("Name", validators=[DataRequired()])
         description = StringField("Description", validators=[DataRequired()])
-        rate = FloatField("Rate", validators=[DataRequired()])
+        rate = FloatField("Rate", validators=[DataRequired()], default=0.0)
 
 class Items(FlaskForm):
         name = DatalistField("Item Name")

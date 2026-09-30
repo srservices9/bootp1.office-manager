@@ -61,33 +61,61 @@ def invoice():
 def new_invoice():
         CUSTOMERS = RECORDS.search_for_records("CUSTOMER")
         ITEMS = RECORDS.search_for_records("ITEM")
-        TERMS = ["net 30", "net 15", "net 0"]
+        TERMS = [(30, "Net 30"), (15, "Net 15"), (0, "Net 0")]
 
-        FORM = NewInvoice()
+        item_names = []
+        item_ids = {}
+        if ITEMS:
+                for item in ITEMS:
+                        item_names.append(item.name)
+                        item_ids[item.name] = item.record_id
 
-        if request.method == "POST":
+        customer_names = []
+        customer_ids = {}
+        if CUSTOMERS:
+                for customer in CUSTOMERS:
+                        customer_names.append(customer.name)
+                        customer_ids[customer.name] = customer.record_id
+
+        FORM = NewInvoice(item_names)
+        FORM.customer.datalist = customer_names
+        FORM.terms.choices = TERMS
+
+        if FORM.validate_on_submit():
                 attributes = {}
-                items = {}
+                items = []
+                total = 0.0
                 error = None 
-                attributes["invoice_num"] = request.form["inv_num"]
-                attributes["terms"] = request.form["terms"]
-                attributes["total"] = request.form["total"]
-                customer_name = request.form["customer"]
+
+                attributes["invoice_num"] = FORM.invoice_num.data
+                attributes["terms"] = FORM.terms.data
                 if not attributes["invoice_num"]:
                         error = "Invoice Number is required"
                 elif not attributes["terms"] or attributes["terms"] not in TERMS:
                         error = "Terms are missing or not valid"
-                elif not attributes["total"]:
-                        error = "Total amount is required"
-                elif not customer_name:
+                # Separate Items and Customer validation
+                elif not FORM.items.entries:
+                        error = "At least one item is required"
+                elif not FORM.customer:
                         error = "Customer is required"
-                else: 
-                        customer_obj = RECORDS.search_for_records("CUSTOMER", {"name": customer_name, "match": None})
-                        # search_for_records method will always return a list of ORM Objects or None.
-                        if not customer_obj:
-                                error = "Customer not found"
-                        else:
-                                attributes["customer_id"] = customer_obj.record_id
+                # Validate customer existence and get customer_id
+                if FORM.customer.data not in customer_names:
+                        error = f"Customer not found: {FORM.customer.data}"
+                else:
+                        attributes["customer_id"] = customer_ids[FORM.customer]
+                # Validate items and get items
+                for item in FORM.items.entries:
+                        if item.form.name.data not in item_names:
+                                error = f"Item not recognized: {item.form.name.data}."
+                                break
+                        if not item.form.rate.data:
+                                error = f"Rate is required for item: {item.form.name.data}"
+                                break
+                        total += item.form.rate.data
+                        items.append(item)
+                
+                attributes["total"] = total
+                attributes["items"] = items
 
                 if error is None:
                         try:
